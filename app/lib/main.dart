@@ -20,12 +20,16 @@ Future<void> main() async {
   final history = HistoryService();
   await history.init();
 
-  runApp(RockFMApp(history: history));
+  final admin = AdminService();
+  await admin.load();
+
+  runApp(RockFMApp(history: history, admin: admin));
 }
 
 class RockFMApp extends StatelessWidget {
   final HistoryService history;
-  const RockFMApp({super.key, required this.history});
+  final AdminService admin;
+  const RockFMApp({super.key, required this.history, required this.admin});
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +40,7 @@ class RockFMApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) => NowPlayingService(history: history)..start(),
         ),
-        ChangeNotifierProvider(create: (_) => AdminService()),
+        ChangeNotifierProvider.value(value: admin),
       ],
       child: MaterialApp(
         title: 'RockFM Turkey',

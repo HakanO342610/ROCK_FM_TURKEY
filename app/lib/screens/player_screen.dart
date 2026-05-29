@@ -7,7 +7,8 @@ import '../services/history_service.dart';
 import '../services/now_playing_service.dart';
 import '../services/player_service.dart';
 import '../theme/app_theme.dart';
-import 'admin_screen.dart';
+import 'admin_login_screen.dart';
+import 'admin_home_screen.dart';
 import 'list_screen.dart';
 
 class PlayerScreen extends StatelessWidget {
@@ -28,16 +29,7 @@ class PlayerScreen extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTap: () {
-                      final admin = context.read<AdminService>();
-                      if (admin.registerTap()) {
-                        showAdminPasswordDialog(context, admin.verify);
-                      }
-                    },
-                    child: const _BrandMark(),
-                  ),
+                  const _BrandMark(),
                   IconButton(
                     icon: const Icon(Icons.menu, color: AppColors.gold),
                     onPressed: () => _showInfoSheet(context),
@@ -392,6 +384,27 @@ void _showInfoSheet(BuildContext context) {
               label: 'iletisim@rockfmturkey.com',
               onTap: () => launchUrl(
                 Uri.parse('mailto:iletisim@rockfmturkey.com'),
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Divider(color: AppColors.border, height: 1),
+            const SizedBox(height: 8),
+            Consumer<AdminService>(
+              builder: (_, admin, _) => _InfoTile(
+                icon: admin.isLoggedIn
+                    ? Icons.admin_panel_settings
+                    : Icons.lock_outline,
+                label: admin.isLoggedIn ? 'Admin Paneli' : 'Admin Girişi',
+                onTap: () {
+                  Navigator.of(ctx).pop();
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => admin.isLoggedIn
+                          ? const AdminHomeScreen(welcomeName: 'Admin')
+                          : const AdminLoginScreen(),
+                    ),
+                  );
+                },
               ),
             ),
             const SizedBox(height: 12),
