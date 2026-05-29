@@ -52,3 +52,8 @@ sample-music/
 *.key
 *_rsa
 *_ed25519
+
+# Android signing — NEVER commit (kaybolursa app güncellemesi yapılamaz!)
+app/android/key.properties
+app/android/*.jks
+app/android/*.keystore

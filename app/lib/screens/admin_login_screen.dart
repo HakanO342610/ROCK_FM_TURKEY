@@ -6,6 +6,7 @@ import '../services/admin_service.dart';
 import '../services/azuracast_api.dart';
 import '../theme/app_theme.dart';
 import 'admin_home_screen.dart';
+import 'qr_scanner_screen.dart';
 
 class AdminLoginScreen extends StatefulWidget {
   const AdminLoginScreen({super.key});
@@ -55,6 +56,15 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
     } finally {
       if (mounted) setState(() => _busy = false);
     }
+  }
+
+  Future<void> _scanQr() async {
+    final code = await Navigator.of(context).push<String>(
+      MaterialPageRoute(builder: (_) => const QrScannerScreen()),
+    );
+    if (code == null || code.isEmpty) return;
+    _keyController.text = code;
+    await _submit();
   }
 
   @override
@@ -122,7 +132,35 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 16),
+              OutlinedButton.icon(
+                onPressed: _busy ? null : _scanQr,
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: AppColors.gold,
+                  side: const BorderSide(color: AppColors.gold, width: 1.5),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  textStyle: const TextStyle(
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 2,
+                  ),
+                ),
+                icon: const Icon(Icons.qr_code_scanner, size: 22),
+                label: const Text('QR KOD İLE GİRİŞ'),
+              ),
+              const SizedBox(height: 10),
+              const Row(
+                children: [
+                  Expanded(child: Divider(color: AppColors.border)),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 12),
+                    child: Text('veya',
+                        style: TextStyle(
+                            color: AppColors.textSecondary, fontSize: 11)),
+                  ),
+                  Expanded(child: Divider(color: AppColors.border)),
+                ],
+              ),
+              const SizedBox(height: 10),
               FilledButton(
                 onPressed: _busy ? null : _submit,
                 style: FilledButton.styleFrom(
@@ -143,7 +181,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                           valueColor: AlwaysStoppedAnimation(Colors.black),
                         ),
                       )
-                    : const Text('GİRİŞ'),
+                    : const Text('YAPIŞTIRARAK GİRİŞ'),
               ),
               const SizedBox(height: 24),
               const Divider(color: AppColors.border),
