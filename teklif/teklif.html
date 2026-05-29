@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>RockFMTurkey Mobil Uygulama Teklifi</title>
+<style>
+  @page { size: A4; margin: 18mm 16mm; }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "Helvetica Neue", Arial, sans-serif;
+    color: #1a2a4a;
+    font-size: 11pt;
+    line-height: 1.5;
+    margin: 0;
+  }
+  .cover {
+    page-break-after: always;
+    height: 250mm;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: linear-gradient(180deg, #f4d4d9 0%, #ffffff 100%);
+    padding: 40px;
+    margin: -18mm -16mm;
+    margin-bottom: 18mm;
+  }
+  .cover .badge {
+    display: inline-block;
+    background: #1a2a4a;
+    color: #fff;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 10pt;
+    letter-spacing: 2px;
+    margin-bottom: 30px;
+  }
+  .cover h1 {
+    font-size: 38pt;
+    margin: 0 0 8px 0;
+    font-weight: 800;
+    color: #1a2a4a;
+  }
+  .cover h2 {
+    font-size: 16pt;
+    margin: 0 0 40px 0;
+    font-weight: 400;
+    color: #4a5a7a;
+  }
+  .cover .info {
+    background: #fff;
+    border: 1px solid #e0d0d4;
+    border-radius: 8px;
+    padding: 20px 30px;
+    margin-top: 30px;
+    text-align: left;
+    min-width: 300px;
+  }
+  .cover .info p { margin: 6px 0; }
+  .cover .info strong { color: #1a2a4a; }
+
+  h2.section {
+    color: #1a2a4a;
+    font-size: 16pt;
+    border-bottom: 3px solid #f4d4d9;
+    padding-bottom: 6px;
+    margin-top: 28px;
+    margin-bottom: 14px;
+  }
+  h3 {
+    color: #1a2a4a;
+    font-size: 12pt;
+    margin-top: 18px;
+    margin-bottom: 8px;
+  }
+  p { margin: 6px 0; }
+  ul { padding-left: 20px; margin: 6px 0; }
+  li { margin: 4px 0; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0 16px 0;
+    font-size: 10.5pt;
+  }
+  th {
+    background: #1a2a4a;
+    color: #fff;
+    padding: 8px 10px;
+    text-align: left;
+    font-weight: 600;
+  }
+  td {
+    padding: 7px 10px;
+    border-bottom: 1px solid #eee;
+  }
+  tr:nth-child(even) td { background: #fafafa; }
+  .total-row td {
+    background: #f4d4d9 !important;
+    font-weight: 700;
+    color: #1a2a4a;
+  }
+  .right { text-align: right; }
+  .center { text-align: center; }
+
+  .box {
+    border: 1px solid #e0d0d4;
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin: 12px 0;
+    background: #fdf8f9;
+  }
+  .box-blue {
+    border: 1px solid #1a2a4a;
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin: 12px 0;
+    background: #f0f4fa;
+  }
+  .price-card {
+    display: inline-block;
+    width: 31%;
+    vertical-align: top;
+    border: 1px solid #e0d0d4;
+    border-radius: 8px;
+    padding: 16px;
+    margin-right: 1%;
+    text-align: center;
+    background: #fff;
+  }
+  .price-card.featured {
+    border: 2px solid #1a2a4a;
+    background: #f0f4fa;
+  }
+  .price-card h4 {
+    margin: 0 0 8px 0;
+    color: #1a2a4a;
+    font-size: 11pt;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .price-card .price {
+    font-size: 18pt;
+    font-weight: 700;
+    color: #1a2a4a;
+    margin: 8px 0;
+  }
+  .price-card .monthly {
+    font-size: 10pt;
+    color: #4a5a7a;
+  }
+  .price-card .note {
+    font-size: 9pt;
+    color: #777;
+    margin-top: 8px;
+  }
+  .check { color: #1a8a4a; font-weight: 700; }
+  .cross { color: #c44; font-weight: 700; }
+  .footer {
+    margin-top: 40px;
+    padding-top: 14px;
+    border-top: 1px solid #ddd;
+    font-size: 9pt;
+    color: #777;
+    text-align: center;
+  }
+  .small { font-size: 9.5pt; color: #555; }
+  .highlight-box {
+    background: #fff7d4;
+    border-left: 4px solid #e0a800;
+    padding: 10px 14px;
+    margin: 12px 0;
+    font-size: 10.5pt;
+  }
+</style>
+</head>
+<body>
+
+<!-- KAPAK -->
+<div class="cover">
+  <div class="badge">MOBİL UYGULAMA TEKLİFİ</div>
+  <img src="logo.jpg" style="width: 160px; height: 160px; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 8px 30px rgba(0,0,0,0.3);" alt="RockFMTurkey">
+  <h1>RockFMTurkey</h1>
+  <h2>iOS · Android · Huawei AppGallery</h2>
+  <div class="info">
+    <p><strong>Hazırlayan:</strong> Hakan</p>
+    <p><strong>Tarih:</strong> 14 Mayıs 2026</p>
+    <p><strong>Kim için:</strong> Abdullah Abi</p>
+  </div>
+</div>
+
+<!-- PROJE ÖZETİ -->
+<h2 class="section">1. Proje Özeti</h2>
+<p>
+RockFMTurkey markası için <strong>iOS, Google Play Store ve Huawei AppGallery</strong>
+mağazalarında yayınlanacak bir mobil radyo uygulaması hazırlanacaktır. Uygulama
+üzerinden kullanıcılar tek butonla canlı yayını dinleyebilecek, o an çalmakta olan
+şarkının sanatçı ve isim bilgisini gerçek zamanlı olarak görebileceklerdir.
+</p>
+<p>
+Müzikler, sadece yönetici (admin) tarafından mobil uygulama üzerinden sisteme
+yüklenecektir. Yüklenen şarkılar sırayla otomatik olarak yayınlanır (24/7 kesintisiz
+yayın). Kullanıcılar şarkı seçemez, sadece dinler. Bu yapı klasik bir radyo deneyimi
+sunar.
+</p>
+<p>
+<strong>Asıl iş hedefi:</strong> uygulamanın kaç kişi tarafından indirildiğini ve aktif
+kullanıldığını ölçmektir. Bunun için her üç mağaza ve uygulama içi analitik panel
+kurulacaktır.
+</p>
+<p>
+Ayrıca <strong>rockfmturkey.com</strong> adresi için sade bir tanıtım web sayfası
+hazırlanacak; ziyaretçiler buradan üç mağazadaki uygulama linklerine ulaşabilecek.
+</p>
+
+<!-- KAPSAM -->
+<h2 class="section">2. Uygulamada Olacak Özellikler (MVP)</h2>
+<div class="box">
+<ul>
+  <li><span class="check">✓</span> Tek dokunuşla canlı yayın dinleme (Başlat / Durdur)</li>
+  <li><span class="check">✓</span> Şu an çalan sanatçı ve şarkı bilgisi (örnek görseldeki tasarım)</li>
+  <li><span class="check">✓</span> Telefon kilitliyken veya başka uygulama açıkken yayının
+       kesilmeden devam etmesi</li>
+  <li><span class="check">✓</span> Kilit ekranı üzerinden başlat/durdur kontrolü</li>
+  <li><span class="check">✓</span> Çalma geçmişi — daha önce çalmış olan şarkıları görme</li>
+  <li><span class="check">✓</span> Beğenilen şarkıları "favori" olarak işaretleme</li>
+  <li><span class="check">✓</span> Yöneticiye özel gizli yükleme ekranı (şifre ile korumalı)</li>
+  <li><span class="check">✓</span> Yönetici: mp3 dosyası yükleme, sıradaki şarkı listesini
+       görme, sıra değiştirme, şarkı silme</li>
+  <li><span class="check">✓</span> Kaç kişinin uygulamayı indirdiğini ve aktif kullandığını
+       ölçen analitik altyapı</li>
+  <li><span class="check">✓</span> Açılış logosu (RockFMTurkey.jpg)</li>
+  <li><span class="check">✓</span> rockfmturkey.com tanıtım web sayfası
+       (üç mağaza indirme butonu ile)</li>
+</ul>
+</div>
+
+<h3>Bu Sürümde Olmayacaklar (Sonraki Fazlara Bırakılanlar)</h3>
+<div class="box">
+<ul>
+  <li><span class="cross">✗</span> Bildirim (push notification) gönderme</li>
+  <li><span class="cross">✗</span> Yöneticinin telefondan canlı konuşma yayını yapması (DJ modu)</li>
+  <li><span class="cross">✗</span> Birden fazla yönetici hesabı</li>
+  <li><span class="cross">✗</span> Kullanıcı kayıt / üyelik sistemi</li>
+  <li><span class="cross">✗</span> Şarkı isteme ve sohbet özelliği</li>
+  <li><span class="cross">✗</span> Birden fazla yayın kanalı</li>
+</ul>
+</div>
+<p class="small">Yukarıdaki özellikler, MVP yayına çıktıktan sonra ihtiyaç doğdukça
+ek faz olarak planlanabilir ve fiyatlandırılabilir.</p>
+
+<!-- YOL HARİTASI -->
+<h2 class="section">3. Yol Haritası ve Süre</h2>
+<table>
+  <thead>
+    <tr><th style="width:8%">Faz</th><th>İçerik</th><th style="width:18%">Süre</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td>Ön tasarım — mobil ekran taslakları ve müşteri onayı</td><td>1 hafta</td></tr>
+    <tr><td>2</td><td>Yayın altyapısı ve web sayfası kurulumu</td><td>1 hafta</td></tr>
+    <tr><td>3</td><td>Kullanıcı uygulamasının geliştirilmesi</td><td>2 hafta</td></tr>
+    <tr><td>4</td><td>Yönetici yükleme ekranının geliştirilmesi</td><td>1 hafta</td></tr>
+    <tr><td>5</td><td>Test ve mağaza hazırlıkları</td><td>1 hafta</td></tr>
+    <tr><td>6</td><td>Mağaza yayın onay süreçleri (Apple, Google, Huawei)</td><td>1–2 hafta</td></tr>
+    <tr class="total-row"><td colspan="2">Toplam tahmini süre</td><td>7–9 hafta</td></tr>
+  </tbody>
+</table>
+
+<!-- FİYATLAR -->
+<h2 class="section">4. Geliştirme Bedeli</h2>
+
+<div style="text-align:center; margin: 10px 0;">
+  <div class="price-card featured" style="width: 60%; margin: 0 auto;">
+    <h4>Geliştirme Bedeli</h4>
+    <div class="price">50.000 TL</div>
+    <div class="monthly">Tek seferlik — MVP tam kapsam</div>
+    <div class="note">3 mağaza için tek kod tabanı + yönetici paneli + web sayfası dahil.<br>
+    2 tur revizyon dahil.</div>
+  </div>
+</div>
+
+<!-- DÜŞÜK BÜTÇE SENARYOSU -->
+<h2 class="section">5. Toplam Başlangıç ve Aylık Giderler</h2>
+
+<div class="highlight-box">
+Geliştirme bedeli (50.000 TL) tek seferlik. Aylık işletme yaklaşık <strong>220 TL</strong>
+(<strong>~5 € sunucu</strong> + alan adı).
+</div>
+
+<h3>5.1. Başlangıç Giderleri</h3>
+<table>
+  <thead>
+    <tr><th>Kalem</th><th class="right">Tutar</th><th>Açıklama</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Uygulama geliştirme</td><td class="right">50.000 TL</td><td>3 mağaza için tek kod tabanı + yönetici paneli + web sayfası</td></tr>
+    <tr><td>Apple Developer üyeliği</td><td class="right"><s style="color:#999">~3.300 TL</s></td><td><strong>Hakan tarafından karşılanacak</strong> (mevcut lisans kullanılacak)</td></tr>
+    <tr><td>Google Play geliştirici</td><td class="right"><s style="color:#999">~830 TL</s></td><td><strong>Hakan tarafından karşılanacak</strong> (mevcut lisans kullanılacak)</td></tr>
+    <tr><td>Huawei Developer</td><td class="right">Ücretsiz</td><td>Sadece kimlik doğrulama (Abdullah Abi'nin açması gerekir)</td></tr>
+    <tr><td>SSL sertifikası (web)</td><td class="right">Ücretsiz</td><td>Let's Encrypt</td></tr>
+    <tr><td>Logo / ikon</td><td class="right">0 TL</td><td>RockFMTurkey.jpg zaten elimizde</td></tr>
+    <tr class="total-row"><td>Sana düşen başlangıç gideri</td><td class="right">50.000 TL</td><td></td></tr>
+  </tbody>
+</table>
+
+<h3>5.2. Aylık Sürekli Giderler</h3>
+<p class="small">100 eşzamanlı dinleyiciye kadar bu konfigürasyon yeterlidir.</p>
+<table>
+  <thead>
+    <tr><th>Kalem</th><th class="right">Aylık</th><th>Açıklama</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Yayın sunucusu (VPS)</td><td class="right">~170 TL</td><td>Hetzner CX22 (~5 € / ay)</td></tr>
+    <tr><td>Bant genişliği</td><td class="right">0 TL</td><td>VPS paketine dahil</td></tr>
+    <tr><td>Alan adı (rockfmturkey.com)</td><td class="right">~50 TL</td><td>Yıllık ücret aylığa bölünmüş</td></tr>
+    <tr><td>Analitik (Google Analytics)</td><td class="right">0 TL</td><td>Ücretsiz katman yeterli</td></tr>
+    <tr class="total-row"><td>Aylık toplam</td><td class="right">~220 TL</td><td></td></tr>
+  </tbody>
+</table>
+
+<h3>5.3. Dinleyici Büyüdükçe Sunucu Maliyeti</h3>
+<table>
+  <thead>
+    <tr><th>Eşzamanlı dinleyici</th><th>Önerilen sunucu</th><th class="right">Aylık sunucu</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>0 – 100 kişi</td><td>Hetzner CX22 (2 vCPU, 4 GB)</td><td class="right">~170 TL</td></tr>
+    <tr><td>100 – 500 kişi</td><td>Hetzner CX32 (4 vCPU, 8 GB)</td><td class="right">~340 TL</td></tr>
+    <tr><td>500 – 2.000 kişi</td><td>Hetzner CPX41 (8 vCPU, 16 GB)</td><td class="right">~850 TL</td></tr>
+    <tr><td>2.000+ kişi</td><td>İçerik dağıtım ağı (CDN) gerekli</td><td class="right">1.500 TL+</td></tr>
+  </tbody>
+</table>
+<p class="small">
+Uygulama büyüdükçe sunucu büyütülür — yeniden yazım gerekmez. Bu kademe geçişleri
+1 günde tamamlanır.
+</p>
+
+<!-- MÜŞTERİ İHTİYAÇLARI -->
+<h2 class="section">6. Senden İhtiyaç Listesi</h2>
+<p>Başlayabilmem için sadece şunlar lazım:</p>
+<div class="box">
+<ul>
+  <li><strong>Logo dosyası</strong> — yüksek çözünürlükte (en az 1024×1024 PNG önerilir)</li>
+  <li><strong>rockfmturkey.com panel giriş bilgileri</strong> — domain <strong>IHS Telekom</strong>'da kayıtlı (21 Aralık 2027'ye kadar geçerli). IHS panelin e-postası ve şifresini bana iletmen yeterli, DNS ayarlarını ben yönetirim.</li>
+  <li><s style="color:#888"><strong>Apple Developer hesabı</strong></s> — <strong>bende mevcut, kullanacağım</strong></li>
+  <li><s style="color:#888"><strong>Google Play Console hesabı</strong></s> — <strong>bende mevcut, kullanacağım</strong></li>
+  <li><strong>Huawei Developer hesabı</strong> — ücretsiz, senin açman gerekir (kimlik doğrulamalı)</li>
+  <li><strong>Telif / lisans</strong> — yayınlanacak şarkılar için MESAM / MSG / MÜYABİR
+       beyanı (yasal sorumluluk sende)</li>
+  <li><strong>Yönetici şifresi</strong> — ilk yükleme şifresi</li>
+  <li><strong>Mağaza açıklamaları</strong> — kısa Türkçe tanıtım metinleri (yardım ederim)</li>
+  <li><strong>Marka renk tercihi</strong> — yoksa örnek görseldeki açık pembe + lacivert
+       kullanılır</li>
+</ul>
+</div>
+
+<!-- NOTLAR -->
+<h2 class="section">7. Önemli Notlar</h2>
+<div class="box-blue">
+<p><strong>Telif:</strong> Türkiye'de internet üzerinden müzik yayını için MESAM, MSG
+ve MÜYABİR'e telif ödemesi yapılması gerekiyor. Yasal sorumluluk sende — bunu netleştirmemiz iyi olur.</p>
+</div>
+<div class="box-blue">
+<p><strong>Mağaza onay süresi:</strong> Apple 1–3 gün, Google 1–2 gün, Huawei 2–5 gün
+içinde onay veriyor. Reddedilirse düzeltme süresi yol haritasına dahil.</p>
+</div>
+<div class="box-blue">
+<p><strong>Önce ekran taslağı:</strong> Kod yazmaya başlamadan tarayıcıda
+açılabilen bir ekran taslağı (mockup) göndereceğim. Sen onaylamadan asıl
+geliştirmeye başlamam.</p>
+</div>
+
+<!-- İLERLEYİŞ -->
+<h2 class="section">8. Nasıl İlerleriz?</h2>
+<ol>
+  <li>"Tamam" dersen, 1 hafta içinde ekran taslağını (mockup) sana yollarım</li>
+  <li>Tasarımı beğenirsen yayın altyapısını kurar ve uygulamayı yazmaya başlarım</li>
+  <li>4–5 hafta içinde test edilebilir hale gelir, ben kullandığım hesaplarla 3 mağazaya birden başvururum</li>
+  <li>Mağazaların onayı gelince uygulama yayında olur</li>
+</ol>
+<p class="small" style="margin-top: 14px;">
+Aramızda olduğu için kağıt iş yapmaya gerek yok. Ödeme şeklini ikimiz konuşuruz.
+</p>
+
+<div class="footer">
+  Soruların olursa her zaman ararsın abi. — Hakan
+</div>
+
+</body>
+</html>

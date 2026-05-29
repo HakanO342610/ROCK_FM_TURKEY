@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>RockFMTurkey — Uygulama Şablonu</title>
+<style>
+  @page { size: A4 landscape; margin: 10mm; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Helvetica Neue", Arial, sans-serif;
+    background: linear-gradient(180deg, #1a1a1a 0%, #2a2520 100%);
+    color: #fff;
+    min-height: 100vh;
+    padding: 30px 20px;
+  }
+  .header {
+    text-align: center;
+    margin-bottom: 25px;
+  }
+  .header h1 {
+    color: #d4a747;
+    font-size: 22pt;
+    letter-spacing: 2px;
+    font-weight: 800;
+  }
+  .header p {
+    color: #aaa;
+    font-size: 11pt;
+    margin-top: 6px;
+  }
+  .phones {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    flex-wrap: wrap;
+  }
+  .phone {
+    width: 230px;
+    height: 460px;
+    background: #000;
+    border-radius: 32px;
+    padding: 8px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.6), inset 0 0 0 2px #333;
+    position: relative;
+  }
+  .phone::before {
+    content: "";
+    position: absolute;
+    top: 12px; left: 50%;
+    transform: translateX(-50%);
+    width: 60px; height: 18px;
+    background: #000;
+    border-radius: 12px;
+    z-index: 10;
+  }
+  .screen {
+    width: 100%; height: 100%;
+    border-radius: 26px;
+    overflow: hidden;
+    background: #0d0d0d;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+  .status-bar {
+    height: 28px;
+    background: #000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 18px;
+    font-size: 8pt;
+    color: #fff;
+    padding-top: 4px;
+  }
+  .screen-content {
+    flex: 1;
+    padding: 16px 14px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .tab-bar {
+    height: 50px;
+    background: #1a1a1a;
+    border-top: 1px solid #333;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    font-size: 9pt;
+  }
+  .tab { color: #888; text-align: center; }
+  .tab.active { color: #d4a747; font-weight: 700; }
+  .tab .icon { font-size: 14pt; display: block; }
+
+  .phone-label {
+    text-align: center;
+    color: #d4a747;
+    font-size: 10pt;
+    margin-top: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+  }
+
+  /* Ekran 1: Ana */
+  .logo-img {
+    width: 130px; height: 130px;
+    margin: 12px auto 8px;
+    border-radius: 16px;
+    object-fit: cover;
+    box-shadow: 0 4px 20px rgba(212, 167, 71, 0.3);
+  }
+  .nowplaying {
+    background: linear-gradient(135deg, #2a1f0d 0%, #3a2f1d 100%);
+    border: 1px solid #d4a747;
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin: 14px 8px;
+    text-align: center;
+  }
+  .nowplaying .label {
+    font-size: 7pt;
+    color: #d4a747;
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+  }
+  .nowplaying .artist {
+    font-size: 11pt;
+    font-weight: 700;
+    color: #fff;
+  }
+  .nowplaying .song {
+    font-size: 9pt;
+    color: #ccc;
+    margin-top: 2px;
+  }
+  .play-button {
+    width: 80px; height: 80px;
+    background: linear-gradient(135deg, #d4a747 0%, #b8862c 100%);
+    border-radius: 50%;
+    margin: 18px auto 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 24px rgba(212, 167, 71, 0.5);
+    color: #000;
+    font-size: 26pt;
+    padding-left: 6px;
+  }
+  .live-badge {
+    text-align: center;
+    color: #d4a747;
+    font-size: 9pt;
+    margin-top: 4px;
+  }
+  .live-badge::before {
+    content: "●";
+    color: #e74c3c;
+    margin-right: 5px;
+    animation: blink 1.5s infinite;
+  }
+  @keyframes blink { 50% { opacity: 0.3; } }
+
+  /* Ekran 2: Geçmiş */
+  .screen-title {
+    color: #d4a747;
+    font-size: 12pt;
+    font-weight: 700;
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #333;
+    letter-spacing: 1px;
+  }
+  .track-item {
+    display: flex;
+    align-items: center;
+    padding: 9px 6px;
+    border-bottom: 1px solid #1f1f1f;
+    font-size: 9pt;
+  }
+  .track-item .num {
+    color: #555;
+    width: 18px;
+    font-size: 8pt;
+  }
+  .track-item .info {
+    flex: 1;
+  }
+  .track-item .artist {
+    color: #fff;
+    font-weight: 600;
+  }
+  .track-item .song {
+    color: #999;
+    font-size: 8pt;
+    margin-top: 1px;
+  }
+  .track-item .heart {
+    color: #d4a747;
+    font-size: 12pt;
+  }
+  .track-item .heart.empty {
+    color: #444;
+  }
+
+  /* Ekran 3: Admin */
+  .admin-badge {
+    background: #d4a747;
+    color: #000;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 7pt;
+    font-weight: 700;
+    display: inline-block;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+  }
+  .upload-button {
+    background: linear-gradient(135deg, #d4a747 0%, #b8862c 100%);
+    color: #000;
+    padding: 14px;
+    border-radius: 10px;
+    text-align: center;
+    font-weight: 700;
+    margin: 10px 0;
+    font-size: 10pt;
+  }
+  .queue-title {
+    color: #888;
+    font-size: 8pt;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 12px 0 6px 0;
+  }
+  .queue-item {
+    background: #1a1a1a;
+    border-radius: 6px;
+    padding: 7px 10px;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    font-size: 8.5pt;
+  }
+  .queue-item.playing {
+    background: #2a1f0d;
+    border-left: 3px solid #d4a747;
+  }
+  .queue-item .num {
+    color: #d4a747;
+    font-weight: 700;
+    width: 22px;
+  }
+  .queue-item .text {
+    flex: 1;
+    color: #fff;
+  }
+  .queue-item .now {
+    color: #d4a747;
+    font-size: 6pt;
+    letter-spacing: 1px;
+  }
+  .queue-item .del {
+    color: #666;
+    font-size: 12pt;
+  }
+
+  .footer-note {
+    text-align: center;
+    color: #888;
+    font-size: 9pt;
+    margin-top: 30px;
+    padding: 12px;
+    border-top: 1px solid #333;
+  }
+  .footer-note strong { color: #d4a747; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>RockFMTurkey · Uygulama Şablonu</h1>
+  <p>Mobil uygulamanın 3 ana ekranı — tahmini görünüm</p>
+</div>
+
+<div class="phones">
+
+  <!-- TELEFON 1: ANA EKRAN -->
+  <div>
+    <div class="phone">
+      <div class="screen">
+        <div class="status-bar">
+          <span>20:14</span>
+          <span style="color:#d4a747">●●●● 4G ⚡</span>
+        </div>
+        <div class="screen-content">
+          <img src="logo.jpg" class="logo-img" alt="RockFMTurkey">
+          <div class="nowplaying">
+            <div class="label">ŞU AN ÇALIYOR</div>
+            <div class="artist">Aerosmith</div>
+            <div class="song">Sweet Emotion</div>
+          </div>
+          <div class="play-button">▶</div>
+          <div class="live-badge">CANLI YAYIN</div>
+        </div>
+        <div class="tab-bar">
+          <div class="tab active"><span class="icon">▶</span>Dinle</div>
+          <div class="tab"><span class="icon">♥</span>Geçmiş</div>
+          <div class="tab"><span class="icon">⚙</span>Ayarlar</div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-label">1 · ANA EKRAN</div>
+  </div>
+
+  <!-- TELEFON 2: GEÇMİŞ -->
+  <div>
+    <div class="phone">
+      <div class="screen">
+        <div class="status-bar">
+          <span>20:14</span>
+          <span style="color:#d4a747">●●●● 4G ⚡</span>
+        </div>
+        <div class="screen-content">
+          <div class="screen-title">♥ GEÇMİŞ</div>
+          <div class="track-item">
+            <div class="num">1</div>
+            <div class="info">
+              <div class="artist">Aerosmith</div>
+              <div class="song">Sweet Emotion</div>
+            </div>
+            <div class="heart">♥</div>
+          </div>
+          <div class="track-item">
+            <div class="num">2</div>
+            <div class="info">
+              <div class="artist">Metallica</div>
+              <div class="song">Enter Sandman</div>
+            </div>
+            <div class="heart empty">♡</div>
+          </div>
+          <div class="track-item">
+            <div class="num">3</div>
+            <div class="info">
+              <div class="artist">Guns N' Roses</div>
+              <div class="song">Sweet Child o' Mine</div>
+            </div>
+            <div class="heart">♥</div>
+          </div>
+          <div class="track-item">
+            <div class="num">4</div>
+            <div class="info">
+              <div class="artist">AC/DC</div>
+              <div class="song">Thunderstruck</div>
+            </div>
+            <div class="heart empty">♡</div>
+          </div>
+          <div class="track-item">
+            <div class="num">5</div>
+            <div class="info">
+              <div class="artist">Pink Floyd</div>
+              <div class="song">Comfortably Numb</div>
+            </div>
+            <div class="heart">♥</div>
+          </div>
+          <div class="track-item">
+            <div class="num">6</div>
+            <div class="info">
+              <div class="artist">Led Zeppelin</div>
+              <div class="song">Stairway to Heaven</div>
+            </div>
+            <div class="heart empty">♡</div>
+          </div>
+          <div class="track-item">
+            <div class="num">7</div>
+            <div class="info">
+              <div class="artist">Nirvana</div>
+              <div class="song">Smells Like Teen Spirit</div>
+            </div>
+            <div class="heart">♥</div>
+          </div>
+        </div>
+        <div class="tab-bar">
+          <div class="tab"><span class="icon">▶</span>Dinle</div>
+          <div class="tab active"><span class="icon">♥</span>Geçmiş</div>
+          <div class="tab"><span class="icon">⚙</span>Ayarlar</div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-label">2 · GEÇMİŞ / FAVORİLER</div>
+  </div>
+
+  <!-- TELEFON 3: ADMIN -->
+  <div>
+    <div class="phone">
+      <div class="screen">
+        <div class="status-bar">
+          <span>20:14</span>
+          <span style="color:#d4a747">●●●● 4G ⚡</span>
+        </div>
+        <div class="screen-content">
+          <div class="admin-badge">YÖNETİCİ</div>
+          <div class="screen-title" style="margin-top: 4px;">MÜZİK YÖNETİMİ</div>
+          <div class="upload-button">+ YENİ MP3 YÜKLE</div>
+          <div class="queue-title">Sıradaki Şarkılar</div>
+          <div class="queue-item playing">
+            <div class="num">1</div>
+            <div class="text">
+              Aerosmith - Sweet Emotion
+              <div class="now">▶ ŞU AN ÇALIYOR</div>
+            </div>
+          </div>
+          <div class="queue-item">
+            <div class="num">2</div>
+            <div class="text">Metallica - One</div>
+            <div class="del">✕</div>
+          </div>
+          <div class="queue-item">
+            <div class="num">3</div>
+            <div class="text">Pink Floyd - Time</div>
+            <div class="del">✕</div>
+          </div>
+          <div class="queue-item">
+            <div class="num">4</div>
+            <div class="text">Queen - Bohemian Rhapsody</div>
+            <div class="del">✕</div>
+          </div>
+          <div class="queue-item">
+            <div class="num">5</div>
+            <div class="text">Deep Purple - Smoke On...</div>
+            <div class="del">✕</div>
+          </div>
+        </div>
+        <div class="tab-bar">
+          <div class="tab"><span class="icon">▶</span>Dinle</div>
+          <div class="tab"><span class="icon">♥</span>Geçmiş</div>
+          <div class="tab active"><span class="icon">⚙</span>Ayarlar</div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-label">3 · YÖNETİCİ PANELİ <span style="color:#888; font-weight:400">(gizli)</span></div>
+  </div>
+
+</div>
+
+<div class="footer-note">
+  Bu tahmini bir <strong>görsel şablondur</strong>. Renkler, yerleşim ve detaylar
+  geliştirme sırasında geri bildirimine göre rafine edilecek.<br>
+  <span style="color:#666; font-size:8pt;">RockFMTurkey · Şablon görünüm · 14 Mayıs 2026</span>
+</div>
+
+</body>
+</html>

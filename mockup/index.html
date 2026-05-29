@@ -1,0 +1,2412 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RockFMTurkey · Mobil Uygulama Tasarımı v1.0</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&family=JetBrains+Mono:wght@500;700&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ───────── TOKENS ───────── */
+:root {
+  --bg-void: #000000;
+  --bg-warm: #0a0805;
+  --bg-elev: #14110a;
+  --bg-tint: rgba(255, 215, 145, 0.04);
+
+  --border-subtle: rgba(232, 193, 74, 0.08);
+  --border-soft: rgba(232, 193, 74, 0.15);
+  --border-strong: rgba(232, 193, 74, 0.35);
+
+  --gold-deep: #8b6914;
+  --gold: #d4a017;
+  --gold-bright: #e8c14a;
+  --gold-soft: #f5d77a;
+  --gold-glow: rgba(232, 193, 74, 0.35);
+
+  --text-primary: #f5f0e8;
+  --text-secondary: rgba(245, 240, 232, 0.62);
+  --text-muted: rgba(245, 240, 232, 0.34);
+  --text-dim: rgba(245, 240, 232, 0.18);
+
+  --live-red: #ff3b3b;
+  --live-red-soft: rgba(255, 59, 59, 0.7);
+  --live-red-glow: rgba(255, 59, 59, 0.45);
+
+  --font-display: 'Big Shoulders Display', 'Impact', sans-serif;
+  --font-body: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', monospace;
+
+  --grad-gold: linear-gradient(135deg, #8b6914 0%, #d4a017 35%, #f5d77a 50%, #d4a017 65%, #8b6914 100%);
+  --grad-gold-soft: linear-gradient(135deg, #b8860b 0%, #e8c14a 50%, #b8860b 100%);
+  --grad-bg: radial-gradient(ellipse at 50% -10%, rgba(212, 160, 23, 0.12) 0%, transparent 50%),
+             linear-gradient(180deg, #050403 0%, #000000 40%, #000000 100%);
+}
+
+/* ───────── RESET ───────── */
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased;
+    -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+html, body { background: var(--bg-void); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+body {
+  font-family: var(--font-body);
+  color: var(--text-primary);
+  line-height: 1.5;
+  background: var(--grad-bg);
+  background-attachment: fixed;
+  min-height: 100vh;
+  position: relative;
+}
+@media print {
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  body { background: #000 !important; }
+  .phone { break-inside: avoid; page-break-inside: avoid; }
+  .section { break-inside: auto; }
+}
+
+/* Film grain overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+img { display: block; max-width: 100%; }
+
+/* ───────── PAGE ───────── */
+.page {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 80px 40px 60px;
+  position: relative;
+}
+
+/* ───────── HERO ───────── */
+.hero {
+  text-align: center;
+  padding: 40px 0 80px;
+  position: relative;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -40px; left: 50%;
+  transform: translateX(-50%);
+  width: 700px; height: 500px;
+  background: radial-gradient(ellipse at center top, rgba(212, 160, 23, 0.18) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: -1;
+}
+.hero-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border: 1px solid var(--border-soft);
+  border-radius: 100px;
+  background: var(--bg-tint);
+  backdrop-filter: blur(20px);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--gold-soft);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: 32px;
+}
+.hero-pill::before {
+  content: '';
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--gold-bright);
+  box-shadow: 0 0 8px var(--gold-glow);
+}
+.hero-logo {
+  width: 130px;
+  height: 130px;
+  margin: 0 auto 28px;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 1px var(--border-soft),
+    0 20px 60px -10px rgba(212, 160, 23, 0.4),
+    0 40px 100px -20px rgba(0, 0, 0, 0.9);
+  position: relative;
+}
+.hero-logo img { width: 100%; height: 100%; object-fit: cover; }
+.hero-title {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 88px;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  background: linear-gradient(180deg, #ffffff 0%, #f5d77a 70%, #d4a017 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 14px;
+  text-transform: uppercase;
+}
+.hero-sub {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 18px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin-bottom: 24px;
+}
+.hero-meta {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+}
+.hero-meta span { color: var(--text-muted); }
+.hero-meta .dot { color: var(--gold); }
+
+.hero-ornament {
+  margin: 56px auto 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  max-width: 400px;
+}
+.hero-ornament-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-strong), transparent);
+}
+.hero-ornament-mark {
+  width: 24px; height: 24px;
+  border: 1px solid var(--gold);
+  transform: rotate(45deg);
+  position: relative;
+  flex-shrink: 0;
+}
+.hero-ornament-mark::after {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  background: var(--gold);
+  opacity: 0.6;
+}
+
+/* ───────── SECTION ───────── */
+.section { padding: 60px 0; }
+.section-head {
+  display: flex;
+  align-items: baseline;
+  gap: 24px;
+  margin-bottom: 56px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.section-num {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 0.1em;
+}
+.section-title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 36px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  line-height: 1;
+  flex: 1;
+}
+.section-note {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* ───────── PHONE GRID ───────── */
+.phone-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 56px 32px;
+  justify-items: center;
+}
+
+.phone {
+  width: 318px;
+  position: relative;
+}
+.phone-device {
+  width: 318px;
+  height: 670px;
+  background: linear-gradient(145deg, #1f1a14 0%, #050403 100%);
+  border-radius: 46px;
+  padding: 9px;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05),
+    inset 0 2px 0 rgba(255, 255, 255, 0.04),
+    0 0 0 1px rgba(0, 0, 0, 0.5),
+    0 30px 60px -15px rgba(212, 160, 23, 0.1),
+    0 50px 120px -30px rgba(0, 0, 0, 0.9);
+  position: relative;
+}
+.phone-device::before {
+  /* side button */
+  content: '';
+  position: absolute;
+  left: -2px; top: 130px;
+  width: 3px; height: 64px;
+  background: linear-gradient(90deg, #2a2218, #0a0805);
+  border-radius: 2px 0 0 2px;
+}
+.phone-screen {
+  width: 100%;
+  height: 100%;
+  background: #000;
+  border-radius: 38px;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.phone-caption {
+  margin-top: 22px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.phone-caption .cap-num {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--gold);
+  letter-spacing: 0.18em;
+}
+.phone-caption .cap-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+}
+.phone-caption .cap-note {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  margin-top: 2px;
+}
+
+/* ───────── STATUS BAR ───────── */
+.sb {
+  height: 38px;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 26px 4px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: 0.02em;
+  position: relative;
+  z-index: 10;
+}
+.sb-icons {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.sb-icons svg { fill: #fff; }
+.sb-notch {
+  position: absolute;
+  top: 8px; left: 50%;
+  transform: translateX(-50%);
+  width: 105px; height: 26px;
+  background: #000;
+  border-radius: 0 0 16px 16px;
+  z-index: 5;
+}
+.sb-notch::before {
+  content: '';
+  position: absolute;
+  top: 8px; right: 22px;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #0a0805;
+  box-shadow: inset 0 0 0 1px #1a1612;
+}
+.sb-notch::after {
+  content: '';
+  position: absolute;
+  top: 11px; right: 38px;
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: #1a1410;
+}
+
+/* ───────── BOTTOM NAV ───────── */
+.bn {
+  height: 76px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-around;
+  padding: 12px 8px 0;
+  background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.6) 40%, #000 100%);
+  border-top: 1px solid rgba(232, 193, 74, 0.06);
+  position: relative;
+}
+.bn-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 4px 12px;
+  border-radius: 8px;
+}
+.bn-item.active {
+  color: var(--gold-bright);
+}
+.bn-item.active svg { fill: var(--gold-bright); }
+.bn-item svg { width: 22px; height: 22px; fill: var(--text-muted); transition: fill 0.2s; }
+.bn-home-bar {
+  position: absolute;
+  bottom: 6px; left: 50%;
+  transform: translateX(-50%);
+  width: 110px; height: 4px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+}
+
+/* ───────── SCREEN BODY ───────── */
+.screen-body {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ───────── HEADER (in-screen) ───────── */
+.scr-head {
+  padding: 8px 24px 20px;
+  position: relative;
+  flex-shrink: 0;
+}
+.scr-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.scr-title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 26px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  line-height: 1;
+}
+.scr-sub {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text-secondary);
+  margin-top: 6px;
+}
+
+/* ═══════════════════════════════════════════════
+   SCREEN 1: SPLASH
+   ═══════════════════════════════════════════════ */
+.splash {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  background:
+    radial-gradient(ellipse at 50% 40%, rgba(212, 160, 23, 0.25) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 100%, rgba(212, 160, 23, 0.08) 0%, transparent 60%),
+    #000;
+  position: relative;
+  overflow: hidden;
+}
+.splash::before {
+  /* light beams from top */
+  content: '';
+  position: absolute;
+  top: -50px; left: 50%;
+  transform: translateX(-50%);
+  width: 360px; height: 400px;
+  background:
+    conic-gradient(from 250deg at 50% 0%,
+      transparent 0deg,
+      rgba(212, 160, 23, 0.08) 30deg,
+      transparent 60deg,
+      rgba(212, 160, 23, 0.05) 80deg,
+      transparent 100deg);
+  pointer-events: none;
+}
+.splash-logo {
+  width: 140px; height: 140px;
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 1px rgba(232, 193, 74, 0.3),
+    0 0 80px rgba(212, 160, 23, 0.5),
+    0 0 160px rgba(212, 160, 23, 0.3);
+  animation: pulse-glow 3s ease-in-out infinite;
+  margin-bottom: 40px;
+  position: relative;
+  z-index: 2;
+}
+.splash-logo img { width: 100%; height: 100%; object-fit: cover; }
+.splash-slogan {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 24px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  text-align: center;
+  position: relative;
+  z-index: 2;
+}
+.splash-slogan span {
+  color: var(--gold-bright);
+}
+.splash-sub {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin-top: 12px;
+  position: relative;
+  z-index: 2;
+}
+.splash-loader {
+  position: absolute;
+  bottom: 60px; left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+  z-index: 2;
+}
+.splash-loader span {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--gold);
+  opacity: 0.4;
+  animation: loader-pulse 1.4s infinite;
+}
+.splash-loader span:nth-child(2) { animation-delay: 0.2s; }
+.splash-loader span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 1px rgba(232, 193, 74, 0.3), 0 0 80px rgba(212, 160, 23, 0.5), 0 0 160px rgba(212, 160, 23, 0.3); }
+  50% { box-shadow: 0 0 0 1px rgba(232, 193, 74, 0.5), 0 0 100px rgba(212, 160, 23, 0.7), 0 0 200px rgba(212, 160, 23, 0.5); }
+}
+@keyframes loader-pulse {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.3); }
+}
+
+/* ═══════════════════════════════════════════════
+   SCREEN 2: MAIN PLAYER
+   ═══════════════════════════════════════════════ */
+.player {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 8px 0 0;
+  position: relative;
+  background:
+    radial-gradient(ellipse at 50% 30%, rgba(212, 160, 23, 0.12) 0%, transparent 60%),
+    #000;
+}
+.player-eyebrow {
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  margin: 16px 0 24px;
+}
+.player-eyebrow::before, .player-eyebrow::after {
+  content: '';
+  display: inline-block;
+  width: 20px; height: 1px;
+  background: var(--border-strong);
+  vertical-align: middle;
+  margin: 0 12px;
+}
+
+/* vinyl record */
+.vinyl-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 32px;
+}
+.vinyl {
+  width: 200px; height: 200px;
+  border-radius: 50%;
+  position: relative;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(232, 193, 74, 0.15) 0%, transparent 50%),
+    repeating-radial-gradient(circle at center,
+      #0a0805 0px, #0a0805 1px,
+      #15110a 1px, #15110a 2px),
+    radial-gradient(circle at center, #1a1612 0%, #050403 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(232, 193, 74, 0.15),
+    inset 0 0 40px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(0, 0, 0, 0.5),
+    0 0 60px rgba(212, 160, 23, 0.25),
+    0 20px 40px rgba(0, 0, 0, 0.6);
+  animation: vinyl-spin 12s linear infinite;
+}
+.vinyl::before {
+  content: '';
+  position: absolute;
+  inset: 28px;
+  border-radius: 50%;
+  background:
+    repeating-radial-gradient(circle at center,
+      rgba(0,0,0,0.4) 0px, rgba(0,0,0,0.4) 1px,
+      transparent 1px, transparent 3px);
+}
+.vinyl-label {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #000;
+  box-shadow:
+    inset 0 0 0 2px var(--gold),
+    0 0 0 1px rgba(0, 0, 0, 0.8),
+    0 4px 12px rgba(0, 0, 0, 0.6);
+}
+.vinyl-label img { width: 100%; height: 100%; object-fit: cover; }
+.vinyl-label::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #000;
+  box-shadow: 0 0 0 2px var(--gold);
+}
+@keyframes vinyl-spin {
+  to { transform: rotate(360deg); }
+}
+
+.player-info {
+  text-align: center;
+  padding: 0 32px;
+  margin-bottom: 18px;
+}
+.player-song {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 28px;
+  letter-spacing: 0.02em;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+  line-height: 1.1;
+}
+.player-artist {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--gold-soft);
+  letter-spacing: 0.05em;
+}
+
+.player-live {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+.live-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--live-red);
+  box-shadow: 0 0 12px var(--live-red-glow);
+  animation: live-pulse 1.6s ease-in-out infinite;
+}
+.live-text {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--live-red);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+@keyframes live-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.85); }
+}
+
+.player-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  margin-bottom: 18px;
+}
+.btn-secondary {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-subtle);
+}
+.btn-secondary svg { fill: var(--text-secondary); }
+.btn-secondary.fav svg { fill: var(--gold-bright); }
+.btn-primary {
+  width: 76px; height: 76px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--grad-gold-soft);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(0, 0, 0, 0.4),
+    0 0 32px rgba(232, 193, 74, 0.4),
+    0 8px 24px rgba(0, 0, 0, 0.6);
+}
+.btn-primary svg { fill: #000; margin-left: 4px; }
+
+/* ═══════════════════════════════════════════════
+   SCREEN 3: HISTORY
+   ═══════════════════════════════════════════════ */
+.track-list {
+  flex: 1;
+  overflow: hidden;
+  padding: 0 16px;
+}
+.track-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 8px;
+  border-bottom: 1px solid var(--border-subtle);
+  position: relative;
+}
+.track-num {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-muted);
+  width: 16px;
+  text-align: right;
+  letter-spacing: 0.05em;
+}
+.track-art {
+  width: 36px; height: 36px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #1a1612, #050403);
+  border: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+  overflow: hidden;
+  position: relative;
+}
+.track-art::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: inset 0 0 0 1px #000, inset 0 0 0 3px var(--gold);
+}
+.track-info {
+  flex: 1;
+  min-width: 0;
+}
+.track-title {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 12.5px;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-bottom: 2px;
+}
+.track-artist {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 10.5px;
+  color: var(--text-secondary);
+}
+.track-meta {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+  text-align: right;
+  margin-right: 4px;
+}
+.track-fav {
+  width: 28px; height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.track-fav svg { fill: var(--text-muted); }
+.track-fav.active svg { fill: var(--gold-bright); }
+
+.track-row.playing {
+  background: linear-gradient(90deg, rgba(212, 160, 23, 0.08), transparent);
+  border-bottom-color: var(--border-soft);
+}
+.track-row.playing .track-title { color: var(--gold-bright); }
+
+/* ═══════════════════════════════════════════════
+   SCREEN 4: FAVORITES (with swipe)
+   ═══════════════════════════════════════════════ */
+.fav-count {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--gold);
+  letter-spacing: 0.15em;
+  margin-top: 8px;
+}
+.track-row.swiped {
+  transform: translateX(-72px);
+  transition: transform 0.3s ease;
+  background: rgba(0, 0, 0, 0.9);
+  position: relative;
+  z-index: 2;
+}
+.swipe-action {
+  position: absolute;
+  right: 0; top: 0;
+  bottom: 0;
+  width: 72px;
+  background: linear-gradient(135deg, #c4302b, #8b1a16);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  z-index: 1;
+}
+.swipe-action svg { fill: #fff; }
+.swipe-action span {
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+.swipe-hint {
+  position: relative;
+  height: 60px;
+  margin-bottom: 4px;
+}
+
+/* ═══════════════════════════════════════════════
+   SCREEN 5: SETTINGS
+   ═══════════════════════════════════════════════ */
+.settings-list {
+  flex: 1;
+  padding: 0 24px;
+  overflow: hidden;
+}
+.settings-group {
+  margin-bottom: 24px;
+}
+.settings-group-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 0 4px 10px;
+  border-bottom: 1px solid var(--border-subtle);
+  margin-bottom: 4px;
+}
+.settings-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 4px;
+  border-bottom: 1px solid rgba(232, 193, 74, 0.04);
+}
+.settings-item:last-child { border-bottom: none; }
+.settings-key {
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+.settings-val {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.settings-val svg { fill: var(--text-muted); }
+
+.about-card {
+  margin: 20px 0;
+  padding: 16px;
+  background:
+    linear-gradient(135deg, rgba(212, 160, 23, 0.05), transparent),
+    rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+}
+.about-card-logo {
+  width: 32px; height: 32px;
+  border-radius: 7px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+.about-card-logo img { width: 100%; height: 100%; }
+.about-card-title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+.about-card-text {
+  font-family: var(--font-body);
+  font-size: 10.5px;
+  font-weight: 400;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* ═══════════════════════════════════════════════
+   SCREEN 6: LOCK SCREEN
+   ═══════════════════════════════════════════════ */
+.lock {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(212, 160, 23, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(180, 90, 30, 0.1) 0%, transparent 50%),
+    linear-gradient(180deg, #1a1208 0%, #050403 50%, #000 100%);
+  padding: 24px 20px;
+  position: relative;
+}
+.lock-top {
+  text-align: center;
+  padding-top: 18px;
+}
+.lock-date {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  letter-spacing: 0.02em;
+  margin-bottom: 4px;
+  opacity: 0.9;
+}
+.lock-time {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: 80px;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: #fff;
+  text-shadow: 0 4px 30px rgba(212, 160, 23, 0.2);
+}
+.lock-widget {
+  margin-top: 32px;
+  padding: 18px 16px 14px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)),
+    rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(40px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 22px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 20px 40px rgba(0, 0, 0, 0.5);
+}
+.lock-widget-app {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.lock-widget-app-icon {
+  width: 18px; height: 18px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.lock-widget-app-icon img { width: 100%; height: 100%; }
+.lock-widget-app-name {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+}
+.lock-widget-app-time {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.5);
+}
+.lock-widget-track {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 14px;
+}
+.lock-widget-art {
+  width: 56px; height: 56px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #000;
+  border: 1px solid rgba(232, 193, 74, 0.3);
+}
+.lock-widget-art img { width: 100%; height: 100%; object-fit: cover; }
+.lock-widget-info { flex: 1; min-width: 0; }
+.lock-widget-song {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lock-widget-artist {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.7);
+}
+.lock-live-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+  padding: 2px 6px;
+  background: rgba(255, 59, 59, 0.15);
+  border: 1px solid rgba(255, 59, 59, 0.3);
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 8px;
+  font-weight: 700;
+  color: var(--live-red);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.lock-live-tag::before {
+  content: '';
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--live-red);
+}
+.lock-widget-bar {
+  height: 3px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 2px;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+.lock-widget-bar::after {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0;
+  left: 0; right: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  animation: bar-shimmer 2.5s linear infinite;
+}
+@keyframes bar-shimmer {
+  to { transform: translateX(100%); }
+}
+.lock-widget-time {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 14px;
+}
+.lock-widget-ctrl {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 4px 0 2px;
+}
+.lock-widget-ctrl button {
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+}
+.lock-widget-ctrl svg { fill: #fff; }
+.lock-widget-ctrl .play-btn {
+  width: 44px; height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.lock-widget-ctrl .play-btn svg { width: 28px; height: 28px; }
+.lock-widget-vol {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+.lock-widget-vol svg { fill: rgba(255, 255, 255, 0.5); flex-shrink: 0; }
+.lock-widget-vol-bar {
+  flex: 1;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 2px;
+  position: relative;
+}
+.lock-widget-vol-bar::after {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 65%;
+  background: #fff;
+  border-radius: 2px;
+}
+.lock-bottom {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 0 8px;
+}
+.lock-icon-circle {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.lock-icon-circle svg { fill: #fff; opacity: 0.9; }
+
+/* ═══════════════════════════════════════════════
+   SCREEN 7: ADMIN ENTRY
+   ═══════════════════════════════════════════════ */
+.admin-entry {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 30px 28px;
+  background:
+    radial-gradient(ellipse at 50% 20%, rgba(212, 160, 23, 0.12) 0%, transparent 50%),
+    #000;
+}
+.admin-hint {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 500;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  text-align: center;
+  padding: 8px 12px;
+  border: 1px dashed var(--border-subtle);
+  border-radius: 8px;
+  margin-bottom: 32px;
+}
+.admin-lock-icon {
+  width: 60px; height: 60px;
+  margin: 0 auto 24px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(212, 160, 23, 0.15), transparent);
+  border: 1px solid var(--border-soft);
+}
+.admin-lock-icon svg { fill: var(--gold-bright); }
+.admin-eyebrow {
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.admin-title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 30px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  text-align: center;
+  margin-bottom: 8px;
+}
+.admin-subtitle {
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: var(--text-secondary);
+  text-align: center;
+  margin-bottom: 28px;
+  line-height: 1.5;
+}
+.input-wrap {
+  margin-bottom: 16px;
+}
+.input-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  padding-left: 4px;
+}
+.input-field {
+  width: 100%;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+}
+.input-field:focus { outline: none; border-color: var(--gold); }
+.btn-fill {
+  width: 100%;
+  padding: 15px;
+  background: var(--grad-gold-soft);
+  border: none;
+  border-radius: 10px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #000;
+  cursor: pointer;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    0 4px 16px rgba(212, 160, 23, 0.3);
+  margin-top: 8px;
+}
+.btn-link {
+  display: block;
+  text-align: center;
+  margin-top: 16px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-secondary);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* ═══════════════════════════════════════════════
+   SCREEN 8: ADMIN QUEUE
+   ═══════════════════════════════════════════════ */
+.admin-toolbar {
+  padding: 0 20px 16px;
+}
+.btn-upload {
+  width: 100%;
+  padding: 14px;
+  background: var(--grad-gold-soft);
+  border: none;
+  border-radius: 12px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.3),
+    0 6px 18px rgba(212, 160, 23, 0.35);
+}
+.btn-upload svg { fill: #000; }
+.queue-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 0 20px 8px;
+}
+.queue-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.queue-count {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+.queue-list {
+  flex: 1;
+  padding: 0 14px;
+  overflow: hidden;
+}
+.queue-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 6px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.queue-handle {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  cursor: grab;
+  padding: 2px;
+}
+.queue-handle span {
+  display: block;
+  width: 12px; height: 2px;
+  background: var(--text-muted);
+  border-radius: 1px;
+}
+.queue-num {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-muted);
+  min-width: 16px;
+}
+.queue-info { flex: 1; min-width: 0; }
+.queue-title {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.queue-meta {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-muted);
+  margin-top: 2px;
+  letter-spacing: 0.04em;
+}
+.queue-delete {
+  width: 26px; height: 26px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.queue-delete svg { fill: var(--text-muted); }
+.queue-item.now-playing {
+  background: linear-gradient(90deg, rgba(212, 160, 23, 0.12), transparent);
+  border-radius: 10px;
+  margin: 0 -6px;
+  padding: 12px 12px;
+  border: 1px solid var(--border-soft);
+  border-bottom: 1px solid var(--border-soft);
+}
+.queue-item.now-playing .queue-title { color: var(--gold-bright); }
+.queue-now-badge {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 8px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+/* ═══════════════════════════════════════════════
+   SCREEN 9: ADMIN UPLOAD
+   ═══════════════════════════════════════════════ */
+.upload {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  background:
+    radial-gradient(ellipse at 50% 30%, rgba(212, 160, 23, 0.1) 0%, transparent 60%),
+    #000;
+}
+.upload-eyebrow {
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  margin: 8px 0;
+}
+.upload-title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 24px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 28px;
+}
+.progress-circle {
+  width: 180px; height: 180px;
+  margin: 0 auto 28px;
+  position: relative;
+}
+.progress-circle svg {
+  width: 100%; height: 100%;
+  transform: rotate(-90deg);
+}
+.progress-bg { fill: none; stroke: rgba(212, 160, 23, 0.1); stroke-width: 8; }
+.progress-fg {
+  fill: none;
+  stroke: url(#goldGrad);
+  stroke-width: 8;
+  stroke-linecap: round;
+  stroke-dasharray: 503;
+  stroke-dashoffset: 166;
+  filter: drop-shadow(0 0 8px rgba(232, 193, 74, 0.5));
+}
+.progress-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.progress-pct {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 44px;
+  line-height: 1;
+  background: linear-gradient(180deg, #fff, var(--gold-bright));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.progress-pct-sub {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+.upload-file {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+}
+.upload-file-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.upload-file-icon {
+  width: 32px; height: 32px;
+  border-radius: 7px;
+  background: linear-gradient(135deg, var(--gold-deep), rgba(0,0,0,0.4));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+.upload-file-info { flex: 1; min-width: 0; }
+.upload-file-name {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 11px;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.upload-file-size {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+.upload-file-bar {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.upload-file-bar-fill {
+  height: 100%;
+  width: 67%;
+  background: var(--grad-gold-soft);
+  border-radius: 2px;
+  box-shadow: 0 0 8px rgba(212, 160, 23, 0.5);
+}
+.upload-info {
+  text-align: center;
+  font-family: var(--font-body);
+  font-size: 10.5px;
+  font-weight: 400;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+  line-height: 1.5;
+  padding: 0 12px;
+}
+.btn-cancel {
+  width: 100%;
+  padding: 13px;
+  background: transparent;
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin-top: auto;
+}
+
+/* ───────── DIVIDER ───────── */
+.divider-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  padding: 60px 0 0;
+  max-width: 600px;
+  margin: 0 auto;
+}
+.divider-section .line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-strong), transparent);
+}
+.divider-section .mark {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  color: var(--gold);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 10px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+}
+.divider-section .mark::before, .divider-section .mark::after {
+  content: '';
+  width: 10px; height: 10px;
+  border: 1px solid var(--gold);
+  transform: rotate(45deg);
+}
+
+/* ───────── FOOTER ───────── */
+.footer {
+  margin-top: 100px;
+  padding: 60px 0 20px;
+  border-top: 1px solid var(--border-subtle);
+  text-align: center;
+  position: relative;
+}
+.footer-mark {
+  width: 48px; height: 48px;
+  margin: 0 auto 24px;
+  border-radius: 12px;
+  overflow: hidden;
+  opacity: 0.6;
+}
+.footer-mark img { width: 100%; height: 100%; }
+.footer-text {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  max-width: 520px;
+  margin: 0 auto 20px;
+}
+.footer-sig {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  background: linear-gradient(180deg, var(--text-primary), var(--gold));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 6px;
+}
+.footer-meta {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* ───────── RESPONSIVE ───────── */
+@media (max-width: 1100px) {
+  .phone-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 720px) {
+  .page { padding: 40px 16px; }
+  .hero-title { font-size: 56px; }
+  .phone-grid { grid-template-columns: 1fr; }
+  .section-title { font-size: 24px; }
+}
+</style>
+</head>
+<body>
+
+<!-- SVG GRADIENT DEFS -->
+<svg width="0" height="0" style="position: absolute;">
+  <defs>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8b6914"/>
+      <stop offset="50%" stop-color="#e8c14a"/>
+      <stop offset="100%" stop-color="#d4a017"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<div class="page">
+
+  <!-- ════════════════════════════════════════
+       HERO
+       ════════════════════════════════════════ -->
+  <header class="hero">
+    <div class="hero-pill">v1.0 · Tasarım Onayı İçin</div>
+    <div class="hero-logo">
+      <img src="logo.jpg" alt="RockFMTurkey">
+    </div>
+    <h1 class="hero-title">RockFMTurkey</h1>
+    <p class="hero-sub">Mobil Uygulama Tasarımı</p>
+    <p class="hero-meta">
+      <span>9 Ekran</span>
+      <span class="dot">◆</span>
+      <span>iOS · Android · Huawei</span>
+      <span class="dot">◆</span>
+      <span>29 Mayıs 2026</span>
+    </p>
+    <div class="hero-ornament">
+      <div class="hero-ornament-line"></div>
+      <div class="hero-ornament-mark"></div>
+      <div class="hero-ornament-line"></div>
+    </div>
+  </header>
+
+  <!-- ════════════════════════════════════════
+       SECTION 01: KULLANICI EKRANLARI
+       ════════════════════════════════════════ -->
+  <section class="section">
+    <div class="section-head">
+      <span class="section-num">01 / 02</span>
+      <h2 class="section-title">Kullanıcı Ekranları</h2>
+      <span class="section-note">6 Ekran</span>
+    </div>
+
+    <div class="phone-grid">
+
+      <!-- ──── SCREEN 1: SPLASH ──── -->
+      <figure class="phone">
+        <div class="phone-device">
+          <div class="phone-screen">
+            <div class="sb-notch"></div>
+            <div class="sb">
+              <span>20:14</span>
+              <div class="sb-icons">
+                <svg width="16" height="11" viewBox="0 0 16 11"><path d="M0 8h2v3H0zM4 6h2v5H4zM8 4h2v7H8zM12 1h2v10h-2z"/></svg>
+                <span style="font-size:10px;font-weight:700;">4G</span>
+                <svg width="22" height="11" viewBox="0 0 22 11"><rect x="0.5" y="0.5" width="18" height="10" rx="2" fill="none" stroke="#fff" stroke-opacity="0.5"/><rect x="2" y="2" width="15" height="7" rx="1"/><rect x="19" y="3" width="1.5" height="5" rx="0.5"/></svg>
+              </div>
+            </div>
+            <div class="screen-body">
+              <div class="splash">
+                <div class="splash-logo">
+                  <img src="logo.jpg" alt="">
+                </div>
+                <h2 class="splash-slogan">RockFM<br><span>Turkey</span></h2>
+                <p class="splash-sub">7/24 Canlı Rock Yayını</p>
+                <div class="splash-loader">
+                  <span></span><span></span><span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <figcaption class="phone-caption">
+          <span class="cap-num">01</span>
+          <span class="cap-name">Açılış</span>
+          <span class="cap-note">Uygulama ilk açılış ekranı</span>
+        </figcaption>
+      </figure>
+
+      <!-- ──── SCREEN 2: MAIN PLAYER ──── -->
+      <figure class="phone">
+        <div class="phone-device">
+          <div class="phone-screen">
+            <div class="sb-notch"></div>
+            <div class="sb">
+              <span>20:14</span>
+              <div class="sb-icons">
+                <svg width="16" height="11" viewBox="0 0 16 11"><path d="M0 8h2v3H0zM4 6h2v5H4zM8 4h2v7H8zM12 1h2v10h-2z"/></svg>
+                <span style="font-size:10px;font-weight:700;">4G</span>
+                <svg width="22" height="11" viewBox="0 0 22 11"><rect x="0.5" y="0.5" width="18" height="10" rx="2" fill="none" stroke="#fff" stroke-opacity="0.5"/><rect x="2" y="2" width="15" height="7" rx="1"/><rect x="19" y="3" width="1.5" height="5" rx="0.5"/></svg>
+              </div>
+            </div>
+            <div class="screen-body">
+              <div class="player">
+                <p class="player-eyebrow">Şu An Çalıyor</p>
+                <div class="vinyl-wrap">
+                  <div class="vinyl">
+                    <div class="vinyl-label">
+                      <img src="logo.jpg" alt="">
+                    </div>
+                  </div>
+                </div>
+                <div class="player-info">
+                  <h2 class="player-song">Sweet Emotion</h2>
+                  <p class="player-artist">Aerosmith</p>
+                </div>
+                <div class="player-live">
+                  <span class="live-dot"></span>
+                  <span class="live-text">Canlı Yayın</span>
+                </div>
+                <div class="player-controls">
+                  <button class="btn-secondary fav" aria-label="Favorile">
+                    <svg width="18" height="18" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                  </button>
+                  <button class="btn-primary" aria-label="Oynat/Duraklat">
+                    <svg width="32" height="32" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                  </button>
+                  <button class="btn-secondary" aria-label="Paylaş">
+                    <svg width="18" height="18" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>
+                  </button>
+                </div>
+              </div>
+              <nav class="bn">
+                <div class="bn-item active">
+                  <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 100 18 9 9 0 000-18zm0 14a5 5 0 110-10 5 5 0 010 10zm0-7a2 2 0 100 4 2 2 0 000-4z"/></svg>
+                  Dinle
+                </div>
+                <div class="bn-item">
+                  <svg viewBox="0 0 24 24"><path d="M12 5v6l4 2-.8 1.3-5.2-3V5z"/><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 18a8 8 0 110-16 8 8 0 010 16z"/></svg>
+                  Geçmiş
+                </div>
+                <div class="bn-item">
+                  <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+                  Favori
+                </div>
+                <div class="bn-item">
+                  <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.488.488 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94 0 .31.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+                  Ayarlar
+                </div>
+                <div class="bn-home-bar"></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+        <figcaption class="phone-caption">
+          <span class="cap-num">02</span>
+          <span class="cap-name">Ana Player</span>
+          <span class="cap-note">Canlı yayın · şu an çalan şarkı</span>
+        </figcaption>
+      </figure>
+
+      <!-- ──── SCREEN 3: LOCK SCREEN ──── -->
+      <figure class="phone">
+        <div class="phone-device">
+          <div class="phone-screen">
+            <div class="sb-notch"></div>
+            <div class="sb">
+              <span>20:14</span>
+              <div class="sb-icons">
+                <svg width="16" height="11" viewBox="0 0 16 11"><path d="M0 8h2v3H0zM4 6h2v5H4zM8 4h2v7H8zM12 1h2v10h-2z"/></svg>
+                <span style="font-size:10px;font-weight:700;">4G</span>
+                <svg width="22" height="11" viewBox="0 0 22 11"><rect x="0.5" y="0.5" width="18" height="10" rx="2" fill="none" stroke="#fff" stroke-opacity="0.5"/><rect x="2" y="2" width="15" height="7" rx="1"/><rect x="19" y="3" width="1.5" height="5" rx="0.5"/></svg>
+              </div>
+            </div>
+            <div class="screen-body">
+              <div class="lock">
+                <div class="lock-top">
+                  <p class="lock-date">Cuma · 29 Mayıs</p>
+                  <p class="lock-time">20:14</p>
+                </div>
+                <div class="lock-widget">
+                  <div class="lock-widget-app">
+                    <div class="lock-widget-app-icon"><img src="logo.jpg" alt=""></div>
+                    <span class="lock-widget-app-name">RockFMTurkey</span>
+                    <span class="lock-widget-app-time">şimdi</span>
+                  </div>
+                  <div class="lock-widget-track">
+                    <div class="lock-widget-art"><img src="logo.jpg" alt=""></div>
+                    <div class="lock-widget-info">
+                      <p class="lock-widget-song">Sweet Emotion</p>
+                      <p class="lock-widget-artist">Aerosmith</p>
+                      <span class="lock-live-tag">Canlı</span>
+                    </div>
+                  </div>
+                  <div class="lock-widget-bar"></div>
+                  <div class="lock-widget-time">
+                    <span>—:—</span>
+                    <span>CANLI</span>
+                  </div>
+                  <div class="lock-widget-ctrl">
+                    <button aria-label="Önceki"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg></button>
+                    <button class="play-btn" aria-label="Duraklat"><svg viewBox="0 0 24 24"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg></button>
+                    <button aria-label="Sonraki"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6h2v12h-2z"/></svg></button>
+                  </div>
+                  <div class="lock-widget-vol">
+                    <svg width="14" height="14" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a4.5 4.5 0 00-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+                    <div class="lock-widget-vol-bar"></div>
+                    <svg width="14" height="14" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a4.5 4.5 0 00-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06a7 7 0 010 13.42v2.06A9 9 0 0014 3.23z"/></svg>
+                  </div>
+                </div>
+                <div class="lock-bottom">
+                  <div class="lock-icon-circle">
+                    <svg width="16" height="16" viewBox="0 0 24 24"><path d="M9 3l-1.41 1.41L18.17 14H4v2h14.17l-10.58 9.59L9 27l12-12z" transform="rotate(180 12 12)"/><path d="M11 21H5V3h6V1H5C3.9 1 3 1.9 3 3v18c0 1.1.9 2 2 2h6v-2zm12-9l-7-7v4H8v6h8v4l7-7z" opacity="0"/><path d="M4 8h2v8H4z"/></svg>
+                  </div>
+                  <div class="lock-icon-circle">
+                    <svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 2a3 3 0 00-3 3v6a3 3 0 006 0V5a3 3 0 00-3-3zm5.91 9c-.49 3-3.39 5.91-6.91 5.91A6.95 6.95 0 015 11H3a8.98 8.98 0 008 8.93V22h2v-2.07c4.71-.47 8-4.45 8-8.93h-2.09z"/></svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <figcaption class="phone-caption">
+          <span class="cap-num">03</span>
+          <span class="cap-name">Kilit Ekranı</span>
+          <span class="cap-note">Telefon kilitliyken kontrol</span>
+        </figcaption>
+      </figure>
+
+      <!-- ──── SCREEN 4: HISTORY ──── -->
+      <figure class="phone">
+        <div class="phone-device">
+          <div class="phone-screen">
+            <div class="sb-notch"></div>
+            <div class="sb">
+              <span>20:14</span>
+              <div class="sb-icons">
+                <svg width="16" height="11" viewBox="0 0 16 11"><path d="M0 8h2v3H0zM4 6h2v5H4zM8 4h2v7H8zM12 1h2v10h-2z"/></svg>
+                <span style="font-size:10px;font-weight:700;">4G</span>
+                <svg width="22" height="11" viewBox="0 0 22 11"><rect x="0.5" y="0.5" width="18" height="10" rx="2" fill="none" stroke="#fff" stroke-opacity="0.5"/><rect x="2" y="2" width="15" height="7" rx="1"/><rect x="19" y="3" width="1.5" height="5" rx="0.5"/></svg>
+              </div>
+            </div>
+            <div class="screen-body">
+              <div class="scr-head">
+                <p class="scr-eyebrow">Son 24 Saat</p>
+                <h2 class="scr-title">Çalma Geçmişi</h2>
+                <p class="scr-sub">Önceden çalan şarkıları gör, favori ekle</p>
+              </div>
+              <div class="track-list">
+                <div class="track-row playing">
+                  <span class="track-num">01</span>
+                  <div class="track-art"></div>
+                  <div class="track-info">
+                    <p class="track-title">Sweet Emotion</p>
+                    <p class="track-artist">Aerosmith</p>
+                  </div>
+                  <p class="track-meta">şimdi</p>
+                  <div class="track-fav active"><svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></div>
+                </div>
+                <div class="track-row">
+                  <span class="track-num">02</span>
+                  <div class="track-art"></div>
+                  <div class="track-info">
+                    <p class="track-title">Enter Sandman</p>
+                    <p class="track-artist">Metallica</p>
+                  </div>
+                  <p class="track-meta">8 dk</p>
+                  <div class="track-fav"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div>
+                </div>
+                <div class="track-row">
+                  <span class="track-num">03</span>
+                  <div class="track-art"></div>
+                  <div class="track-info">
+                    <p class="track-title">Sweet Child o' Mine</p>
+                    <p class="track-artist">Guns N' Roses</p>
+                  </div>
+                  <p class="track-meta">15 dk</p>
+                  <div class="track-fav active"><svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></div>
+                </div>
+                <div class="track-row">
+                  <span class="track-num">04</span>
+                  <div class="track-art"></div>
+                  <div class="track-info">
+                    <p class="track-title">Thunderstruck</p>
+                    <p class="track-artist">AC/DC</p>
+                  </div>
+                  <p class="track-meta">22 dk</p>
+                  <div class="track-fav"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div>
+                </div>
+                <div class="track-row">
+                  <span class="track-num">05</span>
+                  <div class="track-art"></div>
+                  <div class="track-info">
+                    <p class="track-title">Comfortably Numb</p>
+                    <p class="track-artist">Pink Floyd</p>
+                  </div>
+                  <p class="track-meta">31 dk</p>
+                  <div class="track-fav active"><svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></div>
+                </div>
+                <div class="track-row">
+                  <span class="track-num">06</span>
+                  <div class="track-art"></div>
+                  <div class="track-info">
+                    <p class="track-title">Stairway to Heaven</p>
+                    <p class="track-artist">Led Zeppelin</p>
+                  </div>
+                  <p class="track-meta">45 dk</p>
+                  <div class="track-fav"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div>
+                </div>
+                <div class="track-row">
+                  <span class="track-num">07</span>
+                  <div class="track-art"></div>
+                  <div class="track-info">
+                    <p class="track-title">Smells Like Teen Spirit</p>
+                    <p class="track-artist">Nirvana</p>
+                  </div>
+                  <p class="track-meta">1 sa</p>
+                  <div class="track-fav active"><svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></div>
+                </div>
+              </div>
+              <nav class="bn">
+                <div class="bn-item">
+                  <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 100 18 9 9 0 000-18zm0 14a5 5 0 110-10 5 5 0 010 10zm0-7a2 2 0 100 4 2 2 0 000-4z"/></svg>
+                  Dinle
+                </div>
+                <div class="bn-item active">
+                  <svg viewBox="0 0 24 24"><path d="M12 5v6l4 2-.8 1.3-5.2-3V5z"/><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 18a8 8 0 110-16 8 8 0 010 16z"/></svg>
+                  Geçmiş
+                </div>
+                <div class="bn-item">
+                  <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+                  Favori
+                </div>
+                <div class="bn-item">
+                  <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.488.488 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94 0 .31.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+                  Ayarlar
+                </div>
+                <div class="bn-home-bar"></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+        <figcaption class="phone-caption">
+          <span class="cap-num">04</span>
+          <span class="cap-name">Çalma Geçmişi</span>
+          <span class="cap-note">Önceki şarkılar · favori ekleme</span>
+        </figcaption>
+      </figure>
+
+      <!-- ──── SCREEN 5: FAVORITES ──── -->
+      <figure class="phone">
+        <div class="phone-device">
+          <div class="phone-screen">
+            <div class="sb-notch"></div>
+            <div class="sb">
+              <span>20:14</span>
+              <div class="sb-icons">
+                <svg width="16" height="11" viewBox="0 0 16 11"><path d="M0 8h2v3H0zM4 6h2v5H4zM8 4h2v7H8zM12 1h2v10h-2z"/></svg>
+                <span style="font-size:10px;font-weight:700;">4G</span>
+                <svg width="22" height="11" viewBox="0 0 22 11"><rect x="0.5" y="0.5" width="18" height="10" rx="2" fill="none" stroke="#fff" stroke-opacity="0.5"/><rect x="2" y="2" width="15" height="7" rx="1"/><rect x="19" y="3" width="1.5" height="5" rx="0.5"/></svg>
+              </div>
+            </div>
+            <div class="screen-body">
+              <div class="scr-head">
+                <p class="scr-eyebrow">Senin Listen</p>
+                <h2 class="scr-title">Favorilerim</h2>
+                <span class="fav-count">◆ 12 şarkı</span>
+              </div>
+              <div class="track-list">
+                <div class="track-row">
+                  <span class="track-num">01</span>
+                  <div class="track-art"></div>
+                  <div class="track-info">
+                    <p class="track-title">Sweet Emotion</p>
+                    <p class="track-artist">Aerosmith</p>
+                  </div>
+                  <div class="track-fav active"><svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></div>
+                </div>
+                <div class="track-row">
+                  <span class="track-num">02</span>
+                  <div class="track-art"></div>
+                  <div class="track-info">
+                    <p class="track-title">Sweet Child o' Mine</p>
+                    <p class="track-artist">Guns N' Roses</p>
+                  </div>
+                  <div class="track-fav active"><svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></div>
+                </div>
+                <!-- Swipe hint row -->
+                <div class="swipe-hint">
+                  <div class="swipe-action">
+                    <svg width="16" height="16" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                    <span>Sil</span>
+                  </div>
+                  <div class="track-row swiped">
+                    <span class="track-num">03</span>
+                    <div class="track-art"></div>
+                    <div class="track-info">
+                      <p class="track-title">Comfortably Numb</p>
+                      <p class="track-artist">Pink Floyd</p>
+                    </div>
+                    <div class="track-fav active"><svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></div>
+                  </div>
+                </div>
+                <div class="track-row">
+                  <span class="track-num">04</span>
+                  <div class="track-art"></div>
+                  <div class="track-info">
+                    <p class="track-title">Smells Like Teen Spirit</p>
+                    <p class="track-artist">Nirvana</p>
+                  </div>
+                  <div class="track-fav active"><svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></div>
+                </div>
+                <div class="track-row">
+                  <span class="track-num">05</span>
+                  <div class="track-art"></div>
+                  <div class="track-info">
+                    <p class="track-title">Bohemian Rhapsody</p>
+                    <p class="track-artist">Queen</p>
+                  </div>
+                  <div class="track-fav active"><svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></div>
+                </div>
+                <div class="track-row">
+                  <span class="track-num">06</span>
+                  <div class="track-art"></div>
+                  <div class="track-info">
+                    <p class="track-title">Smoke on the Water</p>
+                    <p class="track-artist">Deep Purple</p>
+                  </div>
+                  <div class="track-fav active"><svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></div>
+                </div>
+              </div>
+              <nav class="bn">
+                <div class="bn-item">
+                  <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 100 18 9 9 0 000-18zm0 14a5 5 0 110-10 5 5 0 010 10zm0-7a2 2 0 100 4 2 2 0 000-4z"/></svg>
+                  Dinle
+                </div>
+                <div class="bn-item">
+                  <svg viewBox="0 0 24 24"><path d="M12 5v6l4 2-.8 1.3-5.2-3V5z"/><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 18a8 8 0 110-16 8 8 0 010 16z"/></svg>
+                  Geçmiş
+                </div>
+                <div class="bn-item active">
+                  <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                  Favori
+                </div>
+                <div class="bn-item">
+                  <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.488.488 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94 0 .31.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+                  Ayarlar
+                </div>
+                <div class="bn-home-bar"></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+        <figcaption class="phone-caption">
+          <span class="cap-num">05</span>
+          <span class="cap-name">Favorilerim</span>
+          <span class="cap-note">Sola sürükle → sil</span>
+        </figcaption>
+      </figure>
+
+      <!-- ──── SCREEN 6: SETTINGS ──── -->
+      <figure class="phone">
+        <div class="phone-device">
+          <div class="phone-screen">
+            <div class="sb-notch"></div>
+            <div class="sb">
+              <span>20:14</span>
+              <div class="sb-icons">
+                <svg width="16" height="11" viewBox="0 0 16 11"><path d="M0 8h2v3H0zM4 6h2v5H4zM8 4h2v7H8zM12 1h2v10h-2z"/></svg>
+                <span style="font-size:10px;font-weight:700;">4G</span>
+                <svg width="22" height="11" viewBox="0 0 22 11"><rect x="0.5" y="0.5" width="18" height="10" rx="2" fill="none" stroke="#fff" stroke-opacity="0.5"/><rect x="2" y="2" width="15" height="7" rx="1"/><rect x="19" y="3" width="1.5" height="5" rx="0.5"/></svg>
+              </div>
+            </div>
+            <div class="screen-body">
+              <div class="scr-head">
+                <p class="scr-eyebrow">Tercihler</p>
+                <h2 class="scr-title">Ayarlar</h2>
+              </div>
+              <div class="settings-list">
+                <div class="about-card">
+                  <div class="about-card-logo"><img src="logo.jpg" alt=""></div>
+                  <p class="about-card-title">RockFMTurkey</p>
+                  <p class="about-card-text">Türkiye'nin rock'a açılan kanalı. 7/24 canlı yayın · klasiklerden günümüze.</p>
+                </div>
+                <div class="settings-group">
+                  <p class="settings-group-label">Uygulama</p>
+                  <div class="settings-item">
+                    <span class="settings-key">Versiyon</span>
+                    <span class="settings-val">1.0.0</span>
+                  </div>
+                  <div class="settings-item">
+                    <span class="settings-key">Dil</span>
+                    <span class="settings-val">Türkçe <svg width="12" height="12" viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg></span>
+                  </div>
+                  <div class="settings-item">
+                    <span class="settings-key">Önbellek</span>
+                    <span class="settings-val">12.4 MB</span>
+                  </div>
+                </div>
+                <div class="settings-group">
+                  <p class="settings-group-label">Yasal · İletişim</p>
+                  <div class="settings-item">
+                    <span class="settings-key">Gizlilik Politikası</span>
+                    <span class="settings-val"><svg width="12" height="12" viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg></span>
+                  </div>
+                  <div class="settings-item">
+                    <span class="settings-key">Telif Bilgisi</span>
+                    <span class="settings-val"><svg width="12" height="12" viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg></span>
+                  </div>
+                  <div class="settings-item">
+                    <span class="settings-key">İletişim</span>
+                    <span class="settings-val"><svg width="12" height="12" viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg></span>
+                  </div>
+                </div>
+              </div>
+              <nav class="bn">
+                <div class="bn-item">
+                  <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 100 18 9 9 0 000-18zm0 14a5 5 0 110-10 5 5 0 010 10zm0-7a2 2 0 100 4 2 2 0 000-4z"/></svg>
+                  Dinle
+                </div>
+                <div class="bn-item">
+                  <svg viewBox="0 0 24 24"><path d="M12 5v6l4 2-.8 1.3-5.2-3V5z"/><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 18a8 8 0 110-16 8 8 0 010 16z"/></svg>
+                  Geçmiş
+                </div>
+                <div class="bn-item">
+                  <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+                  Favori
+                </div>
+                <div class="bn-item active">
+                  <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.488.488 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94 0 .31.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+                  Ayarlar
+                </div>
+                <div class="bn-home-bar"></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+        <figcaption class="phone-caption">
+          <span class="cap-num">06</span>
+          <span class="cap-name">Ayarlar · Hakkında</span>
+          <span class="cap-note">Versiyon · telif · iletişim</span>
+        </figcaption>
+      </figure>
+
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       DIVIDER → ADMIN SECTION
+       ════════════════════════════════════════ -->
+  <div class="divider-section">
+    <div class="line"></div>
+    <div class="mark">Gizli Bölüm</div>
+    <div class="line"></div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       SECTION 02: ADMIN
+       ════════════════════════════════════════ -->
+  <section class="section">
+    <div class="section-head">
+      <span class="section-num">02 / 02</span>
+      <h2 class="section-title">Yönetici Ekranları</h2>
+      <span class="section-note">Gizli · 3 Ekran</span>
+    </div>
+
+    <div class="phone-grid">
+
+      <!-- ──── SCREEN 7: ADMIN ENTRY ──── -->
+      <figure class="phone">
+        <div class="phone-device">
+          <div class="phone-screen">
+            <div class="sb-notch"></div>
+            <div class="sb">
+              <span>20:14</span>
+              <div class="sb-icons">
+                <svg width="16" height="11" viewBox="0 0 16 11"><path d="M0 8h2v3H0zM4 6h2v5H4zM8 4h2v7H8zM12 1h2v10h-2z"/></svg>
+                <span style="font-size:10px;font-weight:700;">4G</span>
+                <svg width="22" height="11" viewBox="0 0 22 11"><rect x="0.5" y="0.5" width="18" height="10" rx="2" fill="none" stroke="#fff" stroke-opacity="0.5"/><rect x="2" y="2" width="15" height="7" rx="1"/><rect x="19" y="3" width="1.5" height="5" rx="0.5"/></svg>
+              </div>
+            </div>
+            <div class="screen-body">
+              <div class="admin-entry">
+                <p class="admin-hint">↻ Açılış: Logo'ya 7 kez dokun</p>
+                <div class="admin-lock-icon">
+                  <svg width="28" height="28" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm9 14H6V10h12v10zm-6-3c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"/></svg>
+                </div>
+                <p class="admin-eyebrow">Yetkili Giriş</p>
+                <h2 class="admin-title">Yönetici Girişi</h2>
+                <p class="admin-subtitle">Bu alana sadece yetkili erişebilir.<br>Şifreni girerek devam et.</p>
+                <div class="input-wrap">
+                  <p class="input-label">Yönetici Şifresi</p>
+                  <div class="input-field">● ● ● ● ● ● ●</div>
+                </div>
+                <button class="btn-fill">Giriş Yap</button>
+                <a class="btn-link" href="#">← Ana Ekrana Dön</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <figcaption class="phone-caption">
+          <span class="cap-num">07</span>
+          <span class="cap-name">Admin Giriş</span>
+          <span class="cap-note">Gizli — logo 7 dokunuş açar</span>
+        </figcaption>
+      </figure>
+
+      <!-- ──── SCREEN 8: ADMIN QUEUE ──── -->
+      <figure class="phone">
+        <div class="phone-device">
+          <div class="phone-screen">
+            <div class="sb-notch"></div>
+            <div class="sb">
+              <span>20:14</span>
+              <div class="sb-icons">
+                <svg width="16" height="11" viewBox="0 0 16 11"><path d="M0 8h2v3H0zM4 6h2v5H4zM8 4h2v7H8zM12 1h2v10h-2z"/></svg>
+                <span style="font-size:10px;font-weight:700;">4G</span>
+                <svg width="22" height="11" viewBox="0 0 22 11"><rect x="0.5" y="0.5" width="18" height="10" rx="2" fill="none" stroke="#fff" stroke-opacity="0.5"/><rect x="2" y="2" width="15" height="7" rx="1"/><rect x="19" y="3" width="1.5" height="5" rx="0.5"/></svg>
+              </div>
+            </div>
+            <div class="screen-body">
+              <div class="scr-head">
+                <p class="scr-eyebrow">Yönetici Paneli</p>
+                <h2 class="scr-title">Müzik Yönetimi</h2>
+              </div>
+              <div class="admin-toolbar">
+                <button class="btn-upload">
+                  <svg width="14" height="14" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6z"/></svg>
+                  Yeni MP3 Yükle
+                </button>
+              </div>
+              <div class="queue-head">
+                <span class="queue-label">Sıradaki Şarkılar</span>
+                <span class="queue-count">8 dosya</span>
+              </div>
+              <div class="queue-list">
+                <div class="queue-item now-playing">
+                  <div class="queue-handle"><span></span><span></span><span></span></div>
+                  <div class="queue-info">
+                    <p class="queue-now-badge">▸ Şu An Çalıyor</p>
+                    <p class="queue-title">Aerosmith — Sweet Emotion</p>
+                    <p class="queue-meta">aerosmith_sweet_emotion.mp3 · 4.2 MB</p>
+                  </div>
+                </div>
+                <div class="queue-item">
+                  <div class="queue-handle"><span></span><span></span><span></span></div>
+                  <span class="queue-num">02</span>
+                  <div class="queue-info">
+                    <p class="queue-title">Metallica — One</p>
+                    <p class="queue-meta">04:38 · 6.1 MB</p>
+                  </div>
+                  <div class="queue-delete"><svg width="14" height="14" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></div>
+                </div>
+                <div class="queue-item">
+                  <div class="queue-handle"><span></span><span></span><span></span></div>
+                  <span class="queue-num">03</span>
+                  <div class="queue-info">
+                    <p class="queue-title">Pink Floyd — Time</p>
+                    <p class="queue-meta">06:53 · 8.4 MB</p>
+                  </div>
+                  <div class="queue-delete"><svg width="14" height="14" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></div>
+                </div>
+                <div class="queue-item">
+                  <div class="queue-handle"><span></span><span></span><span></span></div>
+                  <span class="queue-num">04</span>
+                  <div class="queue-info">
+                    <p class="queue-title">Queen — Bohemian Rhapsody</p>
+                    <p class="queue-meta">05:55 · 7.2 MB</p>
+                  </div>
+                  <div class="queue-delete"><svg width="14" height="14" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></div>
+                </div>
+                <div class="queue-item">
+                  <div class="queue-handle"><span></span><span></span><span></span></div>
+                  <span class="queue-num">05</span>
+                  <div class="queue-info">
+                    <p class="queue-title">Deep Purple — Smoke on the Water</p>
+                    <p class="queue-meta">05:40 · 6.8 MB</p>
+                  </div>
+                  <div class="queue-delete"><svg width="14" height="14" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></div>
+                </div>
+                <div class="queue-item">
+                  <div class="queue-handle"><span></span><span></span><span></span></div>
+                  <span class="queue-num">06</span>
+                  <div class="queue-info">
+                    <p class="queue-title">Nirvana — Smells Like Teen Spirit</p>
+                    <p class="queue-meta">05:01 · 5.7 MB</p>
+                  </div>
+                  <div class="queue-delete"><svg width="14" height="14" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></div>
+                </div>
+              </div>
+              <div class="bn">
+                <div class="bn-home-bar"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <figcaption class="phone-caption">
+          <span class="cap-num">08</span>
+          <span class="cap-name">Müzik Yönetimi</span>
+          <span class="cap-note">Yükle · sırala · sil</span>
+        </figcaption>
+      </figure>
+
+      <!-- ──── SCREEN 9: UPLOAD ──── -->
+      <figure class="phone">
+        <div class="phone-device">
+          <div class="phone-screen">
+            <div class="sb-notch"></div>
+            <div class="sb">
+              <span>20:14</span>
+              <div class="sb-icons">
+                <svg width="16" height="11" viewBox="0 0 16 11"><path d="M0 8h2v3H0zM4 6h2v5H4zM8 4h2v7H8zM12 1h2v10h-2z"/></svg>
+                <span style="font-size:10px;font-weight:700;">4G</span>
+                <svg width="22" height="11" viewBox="0 0 22 11"><rect x="0.5" y="0.5" width="18" height="10" rx="2" fill="none" stroke="#fff" stroke-opacity="0.5"/><rect x="2" y="2" width="15" height="7" rx="1"/><rect x="19" y="3" width="1.5" height="5" rx="0.5"/></svg>
+              </div>
+            </div>
+            <div class="screen-body">
+              <div class="upload">
+                <p class="upload-eyebrow">Aktarım Sürüyor</p>
+                <h2 class="upload-title">MP3 Yükleniyor</h2>
+                <div class="progress-circle">
+                  <svg viewBox="0 0 180 180">
+                    <circle class="progress-bg" cx="90" cy="90" r="80"/>
+                    <circle class="progress-fg" cx="90" cy="90" r="80"/>
+                  </svg>
+                  <div class="progress-text">
+                    <span class="progress-pct">67%</span>
+                    <span class="progress-pct-sub">tamamlandı</span>
+                  </div>
+                </div>
+                <div class="upload-file">
+                  <div class="upload-file-row">
+                    <div class="upload-file-icon">MP3</div>
+                    <div class="upload-file-info">
+                      <p class="upload-file-name">aerosmith_sweet_emotion.mp3</p>
+                      <p class="upload-file-size">4.2 MB / 6.3 MB · 320 kbps</p>
+                    </div>
+                  </div>
+                  <div class="upload-file-bar"><div class="upload-file-bar-fill"></div></div>
+                </div>
+                <p class="upload-info">Yükleme tamamlandığında dosya otomatik olarak çalma sırasına eklenir.</p>
+                <button class="btn-cancel">İptal Et</button>
+              </div>
+              <div class="bn">
+                <div class="bn-home-bar"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <figcaption class="phone-caption">
+          <span class="cap-num">09</span>
+          <span class="cap-name">Yükleme</span>
+          <span class="cap-note">Dosya aktarım progress</span>
+        </figcaption>
+      </figure>
+
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       FOOTER
+       ════════════════════════════════════════ -->
+  <footer class="footer">
+    <div class="footer-mark"><img src="logo.jpg" alt=""></div>
+    <p class="footer-text">
+      Bu tahmini görsel tasarımdır. Renkler, yerleşim ve detaylar geri bildirime göre rafine edilebilir.<br>
+      Onayladıktan sonra Flutter ile birebir aynı tasarım üzerinden geliştirme başlar.
+    </p>
+  </footer>
+
+</div>
+
+</body>
+</html>

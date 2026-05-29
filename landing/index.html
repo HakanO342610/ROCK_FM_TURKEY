@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RockFM Turkey — 7/24 Canlı Rock Yayını</title>
+<meta name="description" content="Türkiye'nin rock'a kanal açan radyosu. iOS, Android ve Huawei AppGallery'de.">
+<meta property="og:title" content="RockFM Turkey">
+<meta property="og:description" content="7/24 canlı rock yayını — şimdi indir, kanalı aç.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://rockfmturkey.com">
+<meta property="og:image" content="https://rockfmturkey.com/logo.jpg">
+<meta name="theme-color" content="#000000">
+<link rel="icon" type="image/jpeg" href="/logo.jpg">
+<link rel="shortcut icon" type="image/jpeg" href="/logo.jpg">
+<link rel="apple-touch-icon" href="/logo.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;900&family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    font-family: 'Manrope', -apple-system, sans-serif;
+    background: #000;
+    color: #fff;
+    overflow-x: hidden;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(circle at 20% 10%, rgba(212,160,23,0.18), transparent 50%),
+      radial-gradient(circle at 80% 90%, rgba(232,193,74,0.12), transparent 50%),
+      #000;
+    z-index: -1;
+  }
+
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 32px 24px; }
+
+  /* HEADER */
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 80px;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .brand img {
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 1px solid rgba(212,160,23,0.6);
+  }
+  .brand-text {
+    font-family: 'Big Shoulders Display', sans-serif;
+    font-weight: 900;
+    letter-spacing: 2px;
+    font-size: 22px;
+  }
+  .brand-text .gold { color: #d4a017; }
+  .live-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border: 1px solid #d4a017;
+    border-radius: 999px;
+    background: rgba(212,160,23,0.1);
+    color: #d4a017;
+    font-size: 11px;
+    letter-spacing: 2px;
+    font-weight: 700;
+  }
+  .live-dot {
+    width: 8px;
+    height: 8px;
+    background: #e53935;
+    border-radius: 50%;
+    animation: blink 1.2s ease-in-out infinite;
+  }
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  /* HERO */
+  .hero {
+    text-align: center;
+    padding: 40px 0 80px;
+  }
+  .hero h1 {
+    font-family: 'Big Shoulders Display', sans-serif;
+    font-weight: 900;
+    font-size: clamp(56px, 12vw, 140px);
+    line-height: 0.9;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+  .hero h1 .gold {
+    color: #d4a017;
+    text-shadow: 0 0 60px rgba(212,160,23,0.4);
+  }
+  .hero h1 .turkey {
+    display: block;
+    color: #e8c14a;
+    font-size: 0.7em;
+    letter-spacing: 8px;
+    margin-top: 8px;
+  }
+  .hero .tagline {
+    font-size: clamp(14px, 2vw, 18px);
+    color: #b0b0b0;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-top: 24px;
+    margin-bottom: 16px;
+  }
+  .hero .slogan {
+    font-size: clamp(18px, 2.5vw, 24px);
+    color: #fff;
+    font-weight: 500;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  /* NOW PLAYING CARD */
+  .now-card {
+    max-width: 500px;
+    margin: 60px auto;
+    padding: 24px;
+    background: linear-gradient(135deg, rgba(212,160,23,0.08), rgba(0,0,0,0.6));
+    border: 1px solid rgba(212,160,23,0.4);
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 20px 60px rgba(212,160,23,0.1);
+  }
+  .now-card .label {
+    font-size: 10px;
+    color: #d4a017;
+    letter-spacing: 3px;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+  .now-card .song {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .now-card .art {
+    width: 64px;
+    height: 64px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #d4a017, #8b6a0d);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #000;
+    font-size: 28px;
+    flex-shrink: 0;
+  }
+  .now-card .info { flex: 1; min-width: 0; }
+  .now-card .title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .now-card .artist {
+    font-size: 13px;
+    color: #d4a017;
+    margin-top: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .now-card .play-btn {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #d4a017;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #000;
+    font-size: 18px;
+    flex-shrink: 0;
+    box-shadow: 0 0 30px rgba(212,160,23,0.4);
+    transition: transform 0.2s;
+  }
+  .now-card .play-btn:hover { transform: scale(1.1); }
+  .now-card .play-btn:active { transform: scale(0.95); }
+
+  /* DOWNLOAD SECTION */
+  .download-section {
+    text-align: center;
+    padding: 40px 0 80px;
+  }
+  .download-section h2 {
+    font-family: 'Big Shoulders Display', sans-serif;
+    font-weight: 900;
+    font-size: clamp(28px, 4vw, 40px);
+    letter-spacing: 3px;
+    margin-bottom: 12px;
+  }
+  .download-section .sub {
+    color: #b0b0b0;
+    font-size: 14px;
+    letter-spacing: 1px;
+    margin-bottom: 40px;
+  }
+  .stores {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+  }
+  .store-btn {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 24px;
+    background: #0a0a0a;
+    border: 1px solid #2a2a2a;
+    border-radius: 12px;
+    color: #fff;
+    text-decoration: none;
+    min-width: 200px;
+    transition: all 0.2s;
+  }
+  .store-btn:hover {
+    border-color: #d4a017;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(212,160,23,0.2);
+  }
+  .store-btn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+  .store-btn .icon {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #d4a017;
+    flex-shrink: 0;
+  }
+  .store-btn .icon svg { width: 100%; height: 100%; }
+  .store-btn .txt { text-align: left; }
+  .store-btn .small {
+    font-size: 10px;
+    color: #b0b0b0;
+    letter-spacing: 1px;
+  }
+  .store-btn .big {
+    font-size: 15px;
+    font-weight: 700;
+    margin-top: 1px;
+  }
+
+  /* FEATURES */
+  .features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 24px;
+    padding: 60px 0;
+  }
+  .feature {
+    padding: 24px;
+    background: rgba(10,10,10,0.6);
+    border: 1px solid #2a2a2a;
+    border-radius: 12px;
+  }
+  .feature .ico {
+    color: #d4a017;
+    font-size: 28px;
+    margin-bottom: 12px;
+  }
+  .feature h3 {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #d4a017;
+    margin-bottom: 6px;
+  }
+  .feature p {
+    font-size: 13px;
+    color: #b0b0b0;
+  }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 40px 0 24px;
+    border-top: 1px solid #1a1a1a;
+    margin-top: 40px;
+    color: #555;
+    font-size: 12px;
+  }
+  footer a { color: #d4a017; text-decoration: none; }
+  footer .made { margin-top: 8px; opacity: 0.6; }
+
+  @media (max-width: 600px) {
+    header { margin-bottom: 40px; }
+    .hero { padding: 20px 0 40px; }
+    .live-pill .pill-text { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="brand">
+      <img src="/logo.jpg" alt="RockFM Turkey">
+      <div class="brand-text"><span class="gold">ROCKFM</span> TURKEY</div>
+    </div>
+    <div class="live-pill">
+      <span class="live-dot"></span>
+      <span class="pill-text">CANLI YAYINDA</span>
+    </div>
+  </header>
+
+  <section class="hero">
+    <h1>
+      <span class="gold">ROCKFM</span>
+      <span class="turkey">TURKEY</span>
+    </h1>
+    <div class="tagline">7/24 · CANLI · ROCK</div>
+    <p class="slogan">Türkiye'nin rock'a kanal açan radyosu.<br>Şimdi indir, kanalı aç.</p>
+  </section>
+
+  <div class="now-card" id="nowCard">
+    <div class="label">ŞİMDİ ÇALIYOR</div>
+    <div class="song">
+      <div class="art" id="art">♪</div>
+      <div class="info">
+        <div class="title" id="songTitle">Canlı Yayın</div>
+        <div class="artist" id="songArtist">RockFM Turkey</div>
+      </div>
+      <button class="play-btn" id="playBtn" aria-label="Oynat / Duraklat">▶</button>
+    </div>
+  </div>
+
+  <section class="download-section">
+    <h2>UYGULAMAYI İNDİR</h2>
+    <div class="sub">iOS · Android · Huawei AppGallery</div>
+    <div class="stores">
+      <a href="#" class="store-btn disabled" data-store="apple">
+        <div class="icon">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.08zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+        </div>
+        <div class="txt">
+          <div class="small">YAKINDA</div>
+          <div class="big">App Store</div>
+        </div>
+      </a>
+      <a href="#" class="store-btn disabled" data-store="google">
+        <div class="icon">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 20.5V3.5c0-.59.34-1.11.84-1.35L13.69 12 3.84 21.85c-.5-.25-.84-.76-.84-1.35zM16.81 15.12L6.05 21.34l8.49-8.49 2.27 2.27zM20.16 10.81c.33.18.54.54.54.94 0 .4-.21.76-.54.94l-2.45 1.42-2.59-2.36 2.59-2.36 2.45 1.42zM6.05 2.66l10.76 6.22-2.27 2.27L6.05 2.66z"/></svg>
+        </div>
+        <div class="txt">
+          <div class="small">YAKINDA</div>
+          <div class="big">Google Play</div>
+        </div>
+      </a>
+      <a href="#" class="store-btn disabled" data-store="huawei">
+        <div class="icon">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-3.5-8.5c0-1.93 1.57-3.5 3.5-3.5s3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5-3.5-1.57-3.5-3.5z"/></svg>
+        </div>
+        <div class="txt">
+          <div class="small">YAKINDA</div>
+          <div class="big">AppGallery</div>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <section class="features">
+    <div class="feature">
+      <div class="ico">📻</div>
+      <h3>7/24 CANLI</h3>
+      <p>Yayın hiç durmaz, rock'ın nabzı her zaman seninle.</p>
+    </div>
+    <div class="feature">
+      <div class="ico">🎵</div>
+      <h3>ŞİMDİ ÇALAN</h3>
+      <p>Şarkı/sanatçı bilgisi anlık, lock screen kontrolleri.</p>
+    </div>
+    <div class="feature">
+      <div class="ico">⭐</div>
+      <h3>FAVORİLER</h3>
+      <p>Beğendiğin şarkıları kaydet, geçmişini sakla.</p>
+    </div>
+    <div class="feature">
+      <div class="ico">🎸</div>
+      <h3>SADECE ROCK</h3>
+      <p>Türk ve dünya rock klasikleri, yeni keşifler.</p>
+    </div>
+  </section>
+
+  <footer>
+    <div>© 2026 RockFM Turkey · <a href="mailto:info@rockfmturkey.com">info@rockfmturkey.com</a></div>
+    <div class="made">Tüm hakları saklıdır.</div>
+  </footer>
+
+</div>
+
+<audio id="audio" preload="none" crossorigin="anonymous">
+  <source src="https://stream.rockfmturkey.com/listen/rockfmturkey/radio.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+  const audio = document.getElementById('audio');
+  const playBtn = document.getElementById('playBtn');
+  const songTitle = document.getElementById('songTitle');
+  const songArtist = document.getElementById('songArtist');
+  const art = document.getElementById('art');
+
+  playBtn.addEventListener('click', () => {
+    if (audio.paused) {
+      audio.play().catch(e => console.error('Play failed:', e));
+    } else {
+      audio.pause();
+    }
+  });
+
+  audio.addEventListener('play', () => { playBtn.textContent = '⏸'; });
+  audio.addEventListener('pause', () => { playBtn.textContent = '▶'; });
+
+  async function fetchNowPlaying() {
+    try {
+      const res = await fetch('https://rockfmturkey.com/api/nowplaying/1');
+      if (!res.ok) return;
+      const data = await res.json();
+      const np = data.now_playing?.song;
+      if (np) {
+        songTitle.textContent = np.title || 'Canlı Yayın';
+        songArtist.textContent = np.artist || 'RockFM Turkey';
+        if (np.art) {
+          art.style.background = `url("${np.art}") center/cover`;
+          art.textContent = '';
+        }
+      }
+    } catch (e) { console.error('Now playing error:', e); }
+  }
+
+  fetchNowPlaying();
+  setInterval(fetchNowPlaying, 15000);
+</script>
+</body>
+</html>

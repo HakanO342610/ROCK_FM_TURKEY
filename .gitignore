@@ -1,0 +1,54 @@
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Editor
+.vscode/
+.idea/
+*.iml
+
+# Claude / agent state
+.claude/
+
+# Flutter build artifacts (per-folder .gitignore'lar daha detaylı tutuyor)
+app/.dart_tool/
+app/.flutter-plugins
+app/.flutter-plugins-dependencies
+app/build/
+app/.pub-cache/
+app/.pub/
+
+# iOS / Pods
+app/ios/Pods/
+app/ios/.symlinks/
+app/ios/Flutter/Flutter.framework
+app/ios/Flutter/Flutter.podspec
+app/ios/Flutter/ephemeral/
+
+# Android
+app/android/.gradle/
+app/android/local.properties
+app/android/app/debug/
+app/android/app/profile/
+app/android/app/release/
+
+# Playwright
+tests/node_modules/
+tests/test-results/
+tests/playwright-report/
+tests/blob-report/
+tests/.cache/
+
+# Sample music (telif kapsamı dışı, repo dışında)
+sample-music/
+
+# Secrets / env
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*_rsa
+*_ed25519
