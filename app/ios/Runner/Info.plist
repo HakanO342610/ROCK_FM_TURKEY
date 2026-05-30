@@ -24,6 +24,10 @@
 	<string>????</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Admin girişi için QR kod tarama amacıyla kamera kullanılır.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Admin paneli için cihazınızdan müzik dosyası seçmek amacıyla kullanılır.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Bu uygulama mikrofon kullanmamaktadır.</string>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>

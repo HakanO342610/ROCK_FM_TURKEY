@@ -52,9 +52,17 @@ class _AdminLibraryScreenState extends State<AdminLibraryScreen> {
   }
 
   Future<void> _confirmDelete(Map<String, dynamic> item) async {
-    final id = item['id'];
-    final title = item['title'] ?? item['path'] ?? '—';
-    if (id is! int) return;
+    final media = item['media'] is Map ? item['media'] as Map : item;
+    final id = media['id'] ?? item['id'];
+    final title = item['text'] ?? media['title'] ?? item['path'] ?? '—';
+    if (id is! int) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        backgroundColor: Colors.red[900],
+        content: const Text('Silinemiyor: kayıt ID bulunamadı',
+            style: TextStyle(color: Colors.white)),
+      ));
+      return;
+    }
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -101,21 +109,39 @@ class _AdminLibraryScreenState extends State<AdminLibraryScreen> {
     }
   }
 
-  Future<void> _queueNow(Map<String, dynamic> item) async {
-    final id = item['id'];
-    final title = item['title'] ?? item['path'] ?? '—';
-    if (id is! int) return;
+  Future<void> _addToBroadcast(Map<String, dynamic> item) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final path = item['path'];
+    final title = item['text'] ?? item['path'] ?? '—';
+    if (path is! String || path.isEmpty) {
+      messenger.showSnackBar(const SnackBar(
+        backgroundColor: Color(0xFF7F1010),
+        content: Text('Dosya yolu bulunamadı',
+            style: TextStyle(color: Colors.white)),
+      ));
+      return;
+    }
     try {
-      await _api.queueRequest(id);
+      final plId = await _api.getDefaultPlaylistId();
+      if (plId == null) {
+        messenger.showSnackBar(const SnackBar(
+          backgroundColor: Color(0xFF7F1010),
+          content: Text('Aktif playlist bulunamadı',
+              style: TextStyle(color: Colors.white)),
+        ));
+        return;
+      }
+      await _api.addFilesToPlaylist([path], plId);
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      messenger.showSnackBar(SnackBar(
         backgroundColor: AppColors.surface,
-        content: Text('$title kuyruğa eklendi',
+        content: Text('$title yayına eklendi',
             style: const TextStyle(color: AppColors.gold)),
       ));
+      await _load();
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      messenger.showSnackBar(SnackBar(
         backgroundColor: Colors.red[900],
         content: Text('Eklenemedi: $e',
             style: const TextStyle(color: Colors.white)),
@@ -200,8 +226,8 @@ class _AdminLibraryScreenState extends State<AdminLibraryScreen> {
                                   const SizedBox(height: 8),
                               itemBuilder: (_, i) => _LibraryRow(
                                 item: _items[i],
-                                onQueue: () => _queueNow(_items[i]),
                                 onDelete: () => _confirmDelete(_items[i]),
+                                onAddToBroadcast: () => _addToBroadcast(_items[i]),
                               ),
                             ),
                           ),
@@ -214,17 +240,21 @@ class _AdminLibraryScreenState extends State<AdminLibraryScreen> {
 
 class _LibraryRow extends StatelessWidget {
   final Map<String, dynamic> item;
-  final VoidCallback onQueue;
   final VoidCallback onDelete;
+  final VoidCallback onAddToBroadcast;
   const _LibraryRow({
     required this.item,
-    required this.onQueue,
     required this.onDelete,
+    required this.onAddToBroadcast,
   });
   @override
   Widget build(BuildContext context) {
-    final title = item['title'] ?? item['name'] ?? item['path'] ?? '—';
-    final artist = item['artist'] ?? '';
+    final media = item['media'] is Map ? item['media'] as Map : const {};
+    final title = item['text'] ?? media['title'] ?? item['path'] ?? '—';
+    final artist = media['artist'] ?? item['artist'] ?? '';
+    final playlists = (media['playlists'] as List?) ?? const [];
+    final inBroadcast = playlists.isNotEmpty;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
@@ -251,27 +281,55 @@ class _LibraryRow extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                           color: AppColors.textSecondary, fontSize: 11)),
+                const SizedBox(height: 4),
+                _BroadcastBadge(active: inBroadcast),
               ],
             ),
           ),
-          IconButton(
-            tooltip: 'Kuyruğa ekle',
-            icon: const Icon(Icons.playlist_add,
-                color: AppColors.gold, size: 20),
-            onPressed: onQueue,
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(minWidth: 36),
-          ),
+          if (!inBroadcast)
+            IconButton(
+              tooltip: 'Yayına ekle',
+              icon: const Icon(Icons.add_circle_outline,
+                  color: AppColors.gold, size: 22),
+              onPressed: onAddToBroadcast,
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(minWidth: 40),
+            ),
           IconButton(
             tooltip: 'Sil',
             icon: const Icon(Icons.delete_outline,
-                color: Colors.redAccent, size: 20),
+                color: Colors.redAccent, size: 22),
             onPressed: onDelete,
             padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(minWidth: 36),
+            constraints: const BoxConstraints(minWidth: 40),
           ),
         ],
       ),
+    );
+  }
+}
+
+class _BroadcastBadge extends StatelessWidget {
+  final bool active;
+  const _BroadcastBadge({required this.active});
+  @override
+  Widget build(BuildContext context) {
+    final color = active ? AppColors.gold : Colors.redAccent;
+    final label = active ? 'YAYINDA' : 'YAYIN DIŞI';
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: color, width: 0.8),
+      ),
+      child: Text(label,
+          style: TextStyle(
+            color: color,
+            fontSize: 9,
+            letterSpacing: 1.5,
+            fontWeight: FontWeight.w700,
+          )),
     );
   }
 }

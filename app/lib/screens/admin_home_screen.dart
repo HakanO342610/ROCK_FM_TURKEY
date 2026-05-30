@@ -69,25 +69,97 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
     );
   }
 
-  Future<void> _pickAndUpload() async {
-    final picked = await FilePicker.platform.pickFiles(
-      type: FileType.audio,
-      allowMultiple: false,
-      withData: false,
+  Future<void> _skipCurrent() async {
+    final messenger = ScaffoldMessenger.of(context);
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.surface,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: const BorderSide(color: AppColors.gold),
+        ),
+        title: const Text('Yayını Atla?',
+            style: TextStyle(color: AppColors.gold, fontWeight: FontWeight.w900)),
+        content: const Text(
+          'Şu an çalan şarkı kesilip kuyruktaki bir sonrakine geçilecek.',
+          style: TextStyle(color: AppColors.textPrimary),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('İPTAL',
+                style: TextStyle(color: AppColors.textSecondary)),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('ATLA', style: TextStyle(color: AppColors.gold)),
+          ),
+        ],
+      ),
     );
+    if (ok != true) return;
+    if (!mounted) return;
+    try {
+      await _api.skipCurrentSong();
+      if (!mounted) return;
+      messenger.showSnackBar(SnackBar(
+        backgroundColor: AppColors.surface,
+        content: const Text('Yayın bir sonraki şarkıya atlandı',
+            style: TextStyle(color: AppColors.gold)),
+      ));
+      await Future.delayed(const Duration(seconds: 2));
+      if (!mounted) return;
+      await _refresh();
+    } catch (e) {
+      if (!mounted) return;
+      messenger.showSnackBar(SnackBar(
+        backgroundColor: Colors.red[900],
+        content: Text('Atlama hatası: $e',
+            style: const TextStyle(color: Colors.white)),
+      ));
+    }
+  }
+
+  Future<void> _pickAndUpload() async {
+    final messenger = ScaffoldMessenger.of(context);
+    FilePickerResult? picked;
+    try {
+      picked = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: const ['mp3', 'm4a', 'flac', 'ogg', 'wav'],
+        allowMultiple: false,
+        withData: false,
+      );
+    } catch (e) {
+      messenger.showSnackBar(SnackBar(
+        backgroundColor: Colors.red[900],
+        content: Text('Dosya seçici açılamadı: $e',
+            style: const TextStyle(color: Colors.white)),
+      ));
+      return;
+    }
     if (picked == null || picked.files.isEmpty) return;
     final file = picked.files.first;
-    if (file.path == null) return;
+    final path = file.path;
+    if (path == null) {
+      messenger.showSnackBar(const SnackBar(
+        backgroundColor: Color(0xFF7F1010),
+        content: Text('Dosya yolu okunamadı (iCloud Drive sandbox?)',
+            style: TextStyle(color: Colors.white)),
+      ));
+      return;
+    }
 
     final filename = file.name;
     setState(() => _uploadProgress = 0.0);
     try {
-      await _api.uploadFileMultipart(
-        file: File(file.path!),
-        relativePath: filename,
+      await _api.uploadFile(
+        filename: filename,
+        file: File(path),
       );
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      messenger.showSnackBar(SnackBar(
         backgroundColor: AppColors.surface,
         content: Text('$filename yüklendi',
             style: const TextStyle(color: AppColors.gold)),
@@ -95,9 +167,9 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
       await _refresh();
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      messenger.showSnackBar(SnackBar(
         backgroundColor: Colors.red[900],
-        content: Text('Yükleme hatası: $e',
+        content: Text('Yükleme hatası: ${e.toString().substring(0, e.toString().length.clamp(0, 200))}',
             style: const TextStyle(color: Colors.white)),
       ));
     } finally {
@@ -185,6 +257,12 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                           strokeWidth: 2.5,
                           valueColor: AlwaysStoppedAnimation(AppColors.gold)))
                   : null,
+            ),
+            _ActionTile(
+              icon: Icons.skip_next,
+              title: 'Yayını Atla',
+              subtitle: 'Şu an çalan şarkıyı bitir, sonrakine geç',
+              onTap: _skipCurrent,
             ),
             _ActionTile(
               icon: Icons.library_music,

@@ -52,6 +52,18 @@ class PlayerScreen extends StatelessWidget {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
+              if (nowPlaying?.durationFormatted != null) ...[
+                const SizedBox(height: 4),
+                Text(
+                  nowPlaying!.durationFormatted!,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: AppColors.textSecondary,
+                    letterSpacing: 1,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
               const SizedBox(height: 6),
               Text(
                 nowPlaying?.artist ?? 'RockFM Turkey',
@@ -267,7 +279,24 @@ class _PlayButton extends StatelessWidget {
             processing == ProcessingState.buffering;
 
         return GestureDetector(
-          onTap: loading ? null : service.toggle,
+          onTap: loading
+              ? null
+              : () async {
+                  await service.toggle();
+                  final err = service.lastError;
+                  if (err != null && context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        backgroundColor: AppColors.surface,
+                        duration: const Duration(seconds: 5),
+                        content: Text(
+                          'Yayın başlatılamadı: $err',
+                          style: const TextStyle(color: AppColors.gold),
+                        ),
+                      ),
+                    );
+                  }
+                },
           child: Container(
             width: 96,
             height: 96,

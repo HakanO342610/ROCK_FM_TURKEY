@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RockFM Turkey · Admin</title>
+<link rel="icon" type="image/jpeg" href="/logo.jpg">
+<meta name="theme-color" content="#000000">
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;900&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #000;
+    --surface: #0a0a0a;
+    --surface-2: #141414;
+    --gold: #d4a017;
+    --gold-bright: #e8c14a;
+    --gold-soft: rgba(212,160,23,0.15);
+    --border: #2a2a2a;
+    --text: #fff;
+    --text-2: #b0b0b0;
+    --text-3: #707070;
+    --red: #e53935;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Manrope', sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+  a { color: var(--gold); text-decoration: none; }
+  button {
+    font-family: inherit;
+    cursor: pointer;
+    border: none;
+    background: none;
+    color: inherit;
+  }
+  input, textarea {
+    font-family: inherit;
+    background: var(--surface-2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    width: 100%;
+  }
+  input:focus, textarea:focus {
+    outline: none;
+    border-color: var(--gold);
+  }
+  .brand-mark {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Big Shoulders Display', sans-serif;
+    font-weight: 900;
+    letter-spacing: 2px;
+    color: var(--gold);
+  }
+  .brand-mark img {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    object-fit: cover;
+    border: 1px solid rgba(212,160,23,0.6);
+  }
+
+  /* ============ LOGIN ============ */
+  .login-wrap {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: radial-gradient(circle at 50% 0%, rgba(212,160,23,0.08), transparent 60%);
+  }
+  .login-card {
+    background: var(--surface);
+    border: 1px solid var(--gold);
+    border-radius: 16px;
+    padding: 32px;
+    max-width: 460px;
+    width: 100%;
+    box-shadow: 0 0 60px rgba(212,160,23,0.15);
+  }
+  .login-card h1 {
+    font-family: 'Big Shoulders Display', sans-serif;
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--gold);
+    letter-spacing: 2px;
+    text-align: center;
+    margin-bottom: 4px;
+  }
+  .login-card .sub {
+    color: var(--text-2);
+    text-align: center;
+    font-size: 13px;
+    margin-bottom: 24px;
+  }
+  .form-row { margin-bottom: 14px; }
+  .form-row label {
+    display: block;
+    font-size: 11px;
+    color: var(--text-3);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 22px;
+    border-radius: 8px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    transition: opacity 0.15s;
+    font-size: 13px;
+  }
+  .btn:hover:not(:disabled) { opacity: 0.85; }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn-primary {
+    background: var(--gold);
+    color: #000;
+    width: 100%;
+  }
+  .btn-ghost {
+    background: transparent;
+    color: var(--gold);
+    border: 1px solid var(--gold);
+  }
+  .btn-danger {
+    background: transparent;
+    color: var(--red);
+    border: 1px solid var(--red);
+  }
+  .login-help {
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text-3);
+    line-height: 1.6;
+  }
+  .error-msg {
+    background: rgba(229,57,53,0.15);
+    border: 1px solid var(--red);
+    color: #ff8a87;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    margin-bottom: 14px;
+    display: none;
+  }
+  .error-msg.show { display: block; }
+
+  /* ============ DASHBOARD ============ */
+  .app { display: none; }
+  .app.show { display: block; }
+  .topbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .user-pill {
+    color: var(--text-2);
+    font-size: 12px;
+  }
+  .logout-btn {
+    color: var(--text-3);
+    font-size: 12px;
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    transition: all 0.15s;
+  }
+  .logout-btn:hover { color: var(--red); border-color: var(--red); }
+
+  .wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  @media (max-width: 800px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .card-title {
+    font-size: 11px;
+    color: var(--gold);
+    letter-spacing: 2px;
+    font-weight: 800;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .icon-btn {
+    color: var(--gold);
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+  }
+  .icon-btn:hover { background: var(--gold-soft); }
+
+  /* Now playing */
+  .now-row { display: flex; align-items: center; gap: 14px; }
+  .now-art {
+    width: 64px;
+    height: 64px;
+    border-radius: 8px;
+    background: var(--surface-2);
+    object-fit: cover;
+    border: 1px solid var(--border);
+  }
+  .now-meta { flex: 1; min-width: 0; }
+  .now-title {
+    font-weight: 700;
+    font-size: 16px;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .now-artist {
+    color: var(--text-2);
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .listener-card {
+    background: linear-gradient(135deg, #1a1305 0%, #0a0a0a 100%);
+    border: 1px solid var(--gold);
+    text-align: center;
+  }
+  .listener-count {
+    font-size: 56px;
+    font-weight: 900;
+    color: var(--gold);
+    line-height: 1;
+    font-family: 'Big Shoulders Display', sans-serif;
+  }
+  .listener-label {
+    font-size: 11px;
+    color: var(--gold);
+    letter-spacing: 2px;
+    font-weight: 700;
+    margin-top: 6px;
+  }
+
+  /* Queue */
+  .queue-list { display: flex; flex-direction: column; gap: 8px; }
+  .queue-row {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .queue-row .qm { flex: 1; min-width: 0; }
+  .queue-row .qt {
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .queue-row .qa {
+    font-size: 11px;
+    color: var(--text-2);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .row-action {
+    color: var(--text-3);
+    padding: 6px;
+    border-radius: 4px;
+    transition: color 0.15s;
+  }
+  .row-action:hover { color: var(--red); }
+  .row-action.gold { color: var(--gold); }
+  .row-action.gold:hover { color: var(--gold-bright); }
+
+  .empty {
+    color: var(--text-3);
+    font-style: italic;
+    padding: 18px;
+    text-align: center;
+    font-size: 13px;
+  }
+
+  /* Library + Upload */
+  .lib-toolbar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .lib-toolbar input { flex: 1; }
+
+  .drop-zone {
+    border: 2px dashed var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    text-align: center;
+    color: var(--text-2);
+    transition: all 0.2s;
+    cursor: pointer;
+    margin-bottom: 16px;
+  }
+  .drop-zone:hover, .drop-zone.dragover {
+    border-color: var(--gold);
+    background: var(--gold-soft);
+    color: var(--gold);
+  }
+  .drop-zone strong { color: var(--gold); display: block; margin-bottom: 4px; font-size: 15px; }
+  .drop-zone span { font-size: 12px; }
+  .upload-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .upload-item {
+    background: var(--surface-2);
+    border-radius: 6px;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+  }
+  .upload-item .ut { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .upload-item .us { font-size: 11px; }
+  .upload-item.ok .us { color: #4caf50; }
+  .upload-item.err .us { color: var(--red); }
+  .upload-item.pending .us { color: var(--gold); }
+  .upload-bar {
+    width: 60px;
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .upload-bar > div {
+    background: var(--gold);
+    height: 100%;
+    transition: width 0.2s;
+  }
+
+  .toast-host {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 360px;
+  }
+  .toast {
+    background: var(--surface);
+    border: 1px solid var(--gold);
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 13px;
+    color: var(--text);
+    box-shadow: 0 6px 24px rgba(0,0,0,0.5);
+    animation: slidein 0.2s ease-out;
+  }
+  .toast.err { border-color: var(--red); color: #ff8a87; }
+  @keyframes slidein {
+    from { transform: translateX(20px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+  .live-dot {
+    width: 8px; height: 8px;
+    background: var(--red);
+    border-radius: 50%;
+    display: inline-block;
+    animation: blink 1.2s ease-in-out infinite;
+  }
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .section-title {
+    font-family: 'Big Shoulders Display', sans-serif;
+    font-size: 14px;
+    color: var(--gold);
+    letter-spacing: 2px;
+    font-weight: 900;
+    margin: 28px 0 12px;
+  }
+
+  /* Reports */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  @media (max-width: 700px) {
+    .stat-grid { grid-template-columns: 1fr; }
+  }
+  .stat-box {
+    background: var(--surface-2);
+    border-radius: 10px;
+    padding: 14px;
+    text-align: center;
+    border: 1px solid var(--border);
+  }
+  .stat-num {
+    font-family: 'Big Shoulders Display', sans-serif;
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--gold);
+    line-height: 1;
+  }
+  .stat-lbl {
+    font-size: 10px;
+    color: var(--text-3);
+    letter-spacing: 2px;
+    margin-top: 6px;
+    text-transform: uppercase;
+  }
+  .chart-wrap {
+    position: relative;
+    height: 220px;
+    margin-top: 12px;
+  }
+  .top-list { display: flex; flex-direction: column; gap: 6px; }
+  .top-row {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .top-rank {
+    color: var(--gold);
+    font-weight: 900;
+    font-family: 'Big Shoulders Display', sans-serif;
+    font-size: 20px;
+    min-width: 28px;
+    text-align: center;
+  }
+  .top-meta { flex: 1; min-width: 0; }
+  .top-title {
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .top-sub {
+    font-size: 11px;
+    color: var(--text-3);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .top-count {
+    color: var(--gold);
+    font-weight: 700;
+    font-size: 12px;
+    padding: 4px 10px;
+    background: var(--gold-soft);
+    border-radius: 999px;
+  }
+  .recent-list { display: flex; flex-direction: column; gap: 4px; }
+  .recent-row {
+    padding: 8px 12px;
+    background: var(--surface-2);
+    border-radius: 6px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    font-size: 12px;
+  }
+  .recent-time {
+    color: var(--text-3);
+    font-size: 10px;
+    letter-spacing: 1px;
+    min-width: 56px;
+  }
+  .recent-text {
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .recent-pl {
+    color: var(--gold);
+    font-size: 10px;
+    padding: 2px 8px;
+    background: var(--gold-soft);
+    border-radius: 999px;
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ LOGIN SCREEN ============ -->
+<div id="loginScreen" class="login-wrap">
+  <div class="login-card">
+    <div class="brand-mark" style="justify-content: center; margin-bottom: 16px;">
+      <img src="/logo.jpg" alt="RockFM Turkey">
+      <span>ROCKFMTURKEY</span>
+    </div>
+    <h1>ADMİN GİRİŞİ</h1>
+    <p class="sub">Hesabınıza ait API anahtarını yapıştırın.</p>
+
+    <div id="loginError" class="error-msg"></div>
+
+    <div class="form-row">
+      <label for="apiKeyInput">API ANAHTARI</label>
+      <input type="password" id="apiKeyInput" placeholder="xxx:yyy..." autocomplete="off">
+    </div>
+
+    <button id="loginBtn" class="btn btn-primary">GİRİŞ</button>
+
+    <div class="login-help">
+      Tarayıcının "Şifre Yöneticisi" özelliği ile sonraki girişler için kaydedebilirsin.
+    </div>
+  </div>
+</div>
+
+<!-- ============ APP DASHBOARD ============ -->
+<div id="appScreen" class="app">
+  <div class="topbar">
+    <div class="brand-mark">
+      <img src="/logo.jpg" alt="">
+      <span>ROCKFMTURKEY · ADMİN</span>
+    </div>
+    <div class="topbar-right">
+      <span class="user-pill" id="userPill"></span>
+      <button class="logout-btn" id="logoutBtn">ÇIKIŞ</button>
+    </div>
+  </div>
+
+  <div class="wrap">
+
+    <div class="grid">
+      <!-- Now playing -->
+      <div class="card">
+        <div class="card-title">
+          <span><span class="live-dot"></span> ŞİMDİ ÇALIYOR</span>
+          <button class="icon-btn" id="refreshNpBtn" title="Yenile">↻</button>
+        </div>
+        <div id="nowPlaying" class="now-row">
+          <div class="now-art">🎵</div>
+          <div class="now-meta">
+            <div class="now-title">Yükleniyor...</div>
+            <div class="now-artist">—</div>
+          </div>
+        </div>
+        <div style="margin-top: 16px;">
+          <button class="btn btn-ghost" id="skipBtn" style="width: 100%;">⏭ YAYINI ATLA</button>
+        </div>
+      </div>
+
+      <!-- Listener count -->
+      <div class="card listener-card">
+        <div class="card-title" style="justify-content: center;">CANLI DİNLEYİCİ</div>
+        <div class="listener-count" id="listenerCount">—</div>
+        <div class="listener-label">ŞU AN</div>
+      </div>
+    </div>
+
+    <h2 class="section-title">SIRADAKİ ŞARKILAR</h2>
+    <div class="card">
+      <div id="queueList" class="queue-list">
+        <div class="empty">Yükleniyor...</div>
+      </div>
+    </div>
+
+    <h2 class="section-title">ŞARKI YÜKLE</h2>
+    <div class="card">
+      <div class="drop-zone" id="dropZone">
+        <strong>📁 mp3 dosyalarını buraya sürükle</strong>
+        <span>veya tıklayarak bilgisayardan seç · birden çok dosya seçebilirsin</span>
+        <input type="file" id="fileInput" accept="audio/*,.mp3,.m4a,.flac,.ogg,.wav" multiple style="display:none">
+      </div>
+      <div id="uploadList" class="upload-list"></div>
+    </div>
+
+    <h2 class="section-title">RAPORLAR</h2>
+
+    <div class="stat-grid">
+      <div class="stat-box">
+        <div class="stat-num" id="statTotalListens">—</div>
+        <div class="stat-lbl">SON 30 GÜN ÇALMA</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" id="statPeakListeners">—</div>
+        <div class="stat-lbl">PİK DİNLEYİCİ (30G)</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" id="statTotalSongs">—</div>
+        <div class="stat-lbl">KÜTÜPHANE ŞARKI</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <span>📈 GÜNLÜK DİNLEYİCİ TRENDİ</span>
+        <button class="icon-btn" id="refreshReportsBtn" title="Yenile">↻</button>
+      </div>
+      <div class="chart-wrap"><canvas id="listenerChart"></canvas></div>
+    </div>
+
+    <div class="grid" style="margin-top: 16px;">
+      <div class="card">
+        <div class="card-title">🔥 EN ÇOK ÇALAN (TOP 10)</div>
+        <div id="topSongsList" class="top-list">
+          <div class="empty">Yükleniyor...</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">🕒 SON ÇALANLAR</div>
+        <div id="recentList" class="recent-list">
+          <div class="empty">Yükleniyor...</div>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="section-title">MÜZİK KÜTÜPHANESİ</h2>
+    <div class="card">
+      <div class="lib-toolbar">
+        <input type="text" id="searchInput" placeholder="Şarkı / sanatçı ara...">
+        <button class="btn btn-ghost" id="searchBtn">ARA</button>
+      </div>
+      <div id="libraryList" class="queue-list">
+        <div class="empty">Yükleniyor...</div>
+      </div>
+    </div>
+
+    <div style="text-align: center; color: var(--text-3); font-size: 11px; margin: 32px 0 16px;">
+      RockFM Turkey · Admin Panel · <span id="versionTag">v1.0.0</span>
+    </div>
+  </div>
+</div>
+
+<div id="toastHost" class="toast-host"></div>
+
+<script>
+  // ============== STATE ==============
+  const STORAGE_KEY = 'rockfm_admin_api_key';
+  const API_BASE = '/api';
+  const STATION = 1;
+
+  let apiKey = localStorage.getItem(STORAGE_KEY) || '';
+  let me = null;
+  let pollTimer = null;
+
+  // ============== HELPERS ==============
+  const $ = (id) => document.getElementById(id);
+  const show = (el, on = true) => el.classList.toggle('show', on);
+
+  function toast(msg, isErr = false) {
+    const host = $('toastHost');
+    const t = document.createElement('div');
+    t.className = 'toast' + (isErr ? ' err' : '');
+    t.textContent = msg;
+    host.appendChild(t);
+    setTimeout(() => {
+      t.style.opacity = '0';
+      setTimeout(() => t.remove(), 200);
+    }, 3500);
+  }
+
+  function escHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[c]));
+  }
+
+  async function api(path, opts = {}) {
+    const r = await fetch(API_BASE + path, {
+      ...opts,
+      headers: {
+        'X-API-Key': apiKey,
+        'Accept': 'application/json',
+        ...(opts.headers || {}),
+      },
+    });
+    if (r.status === 401 || r.status === 403) {
+      logout();
+      throw new Error('Yetki hatası — yeniden giriş gerek');
+    }
+    if (!r.ok) {
+      let msg = `HTTP ${r.status}`;
+      try {
+        const j = await r.json();
+        if (j.message) msg += ': ' + j.message;
+      } catch (_) {}
+      throw new Error(msg);
+    }
+    if (r.status === 204) return null;
+    const text = await r.text();
+    return text ? JSON.parse(text) : null;
+  }
+
+  // ============== LOGIN ==============
+  $('loginBtn').addEventListener('click', tryLogin);
+  $('apiKeyInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') tryLogin();
+  });
+
+  async function tryLogin() {
+    const v = $('apiKeyInput').value.trim();
+    const err = $('loginError');
+    err.classList.remove('show');
+    if (!v) {
+      err.textContent = 'API anahtarı boş olamaz';
+      err.classList.add('show');
+      return;
+    }
+    apiKey = v;
+    $('loginBtn').disabled = true;
+    $('loginBtn').textContent = 'KONTROL EDİLİYOR...';
+    try {
+      me = await api('/frontend/account/me');
+      localStorage.setItem(STORAGE_KEY, apiKey);
+      enterApp();
+    } catch (e) {
+      apiKey = '';
+      err.textContent = e.message || 'Giriş başarısız';
+      err.classList.add('show');
+    } finally {
+      $('loginBtn').disabled = false;
+      $('loginBtn').textContent = 'GİRİŞ';
+    }
+  }
+
+  function logout() {
+    apiKey = '';
+    me = null;
+    localStorage.removeItem(STORAGE_KEY);
+    if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+    show($('appScreen'), false);
+    $('loginScreen').style.display = 'flex';
+    $('apiKeyInput').value = '';
+  }
+
+  $('logoutBtn').addEventListener('click', logout);
+
+  // ============== APP ENTER ==============
+  function enterApp() {
+    $('loginScreen').style.display = 'none';
+    show($('appScreen'), true);
+    $('userPill').textContent = me ? `${me.name || me.email}` : '';
+    refreshAll();
+    loadLibrary();
+    loadReports();
+    pollTimer = setInterval(refreshAll, 15000);
+  }
+
+  // ============== NOW PLAYING + QUEUE ==============
+  async function refreshAll() {
+    try {
+      const [np, q] = await Promise.all([
+        fetch(`${API_BASE}/nowplaying/${STATION}`).then(r => r.json()),
+        api(`/station/${STATION}/queue`),
+      ]);
+      renderNowPlaying(np);
+      renderQueue(q);
+    } catch (e) {
+      // sessizce devam, sonraki tick dener
+      console.error('refresh', e);
+    }
+  }
+
+  function renderNowPlaying(np) {
+    const song = np?.now_playing?.song || {};
+    const title = song.title || np?.now_playing?.title || '—';
+    const artist = song.artist || np?.now_playing?.artist || '';
+    const art = song.art || '';
+    const listeners = np?.listeners?.current ?? 0;
+    $('listenerCount').textContent = listeners;
+    const root = $('nowPlaying');
+    root.innerHTML = `
+      ${art
+        ? `<img class="now-art" src="${escHtml(art)}" alt="">`
+        : `<div class="now-art" style="display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:28px;">♪</div>`}
+      <div class="now-meta">
+        <div class="now-title">${escHtml(title)}</div>
+        <div class="now-artist">${escHtml(artist)}</div>
+      </div>
+    `;
+  }
+
+  function renderQueue(items) {
+    const root = $('queueList');
+    if (!items || items.length === 0) {
+      root.innerHTML = '<div class="empty">Kuyruk boş — otomatik playlist çalıyor</div>';
+      return;
+    }
+    root.innerHTML = items.map(it => {
+      const song = it.song || it;
+      const title = song.title || it.title || it.text || '—';
+      const artist = song.artist || it.artist || '';
+      const id = it.id;
+      return `
+        <div class="queue-row">
+          <div class="qm">
+            <div class="qt">${escHtml(title)}</div>
+            ${artist ? `<div class="qa">${escHtml(artist)}</div>` : ''}
+          </div>
+          ${id ? `<button class="row-action" data-qrem="${id}" title="Kuyruktan çıkar">✕</button>` : ''}
+        </div>
+      `;
+    }).join('');
+    root.querySelectorAll('[data-qrem]').forEach(b => {
+      b.addEventListener('click', () => removeFromQueue(parseInt(b.dataset.qrem, 10)));
+    });
+  }
+
+  async function removeFromQueue(id) {
+    try {
+      await api(`/station/${STATION}/queue/${id}`, { method: 'DELETE' });
+      toast('Kuyruktan çıkarıldı');
+      refreshAll();
+    } catch (e) {
+      toast('Silinemedi: ' + e.message, true);
+    }
+  }
+
+  // ============== SKIP ==============
+  $('refreshNpBtn').addEventListener('click', refreshAll);
+  $('skipBtn').addEventListener('click', async () => {
+    if (!confirm('Şu an çalan şarkı kesilip sonrakine geçilecek. Devam?')) return;
+    try {
+      await api(`/station/${STATION}/backend/skip`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: '{}',
+      });
+      toast('Yayın atlandı');
+      setTimeout(refreshAll, 2000);
+    } catch (e) {
+      toast('Atlama hatası: ' + e.message, true);
+    }
+  });
+
+  // ============== REPORTS ==============
+  let listenerChartInstance = null;
+  $('refreshReportsBtn').addEventListener('click', loadReports);
+
+  async function loadReports() {
+    try {
+      const [charts, bw, history, files] = await Promise.all([
+        api(`/station/${STATION}/reports/overview/charts`).catch(() => null),
+        api(`/station/${STATION}/reports/overview/best-and-worst`).catch(() => null),
+        api(`/station/${STATION}/history`).catch(() => []),
+        api(`/station/${STATION}/files/list`).catch(() => []),
+      ]);
+
+      renderDailyChart(charts);
+      renderStatBoxes(charts, history, files);
+      renderTopSongs(bw);
+      renderRecent(history);
+    } catch (e) {
+      console.error('loadReports', e);
+    }
+  }
+
+  function renderDailyChart(charts) {
+    const canvas = $('listenerChart');
+    if (!canvas) return;
+    const daily = charts?.daily?.metrics?.[0]?.data || [];
+    const labels = daily.map(p => new Date(p.x).toLocaleDateString('tr-TR', {month: 'short', day: 'numeric'}));
+    const values = daily.map(p => p.y);
+
+    if (listenerChartInstance) listenerChartInstance.destroy();
+
+    listenerChartInstance = new Chart(canvas, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Dinleyici',
+          data: values,
+          borderColor: '#d4a017',
+          backgroundColor: 'rgba(212,160,23,0.18)',
+          fill: true,
+          tension: 0.35,
+          pointRadius: 3,
+          pointBackgroundColor: '#d4a017',
+        }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#0a0a0a',
+            borderColor: '#d4a017',
+            borderWidth: 1,
+            titleColor: '#d4a017',
+            bodyColor: '#fff',
+          },
+        },
+        scales: {
+          x: {
+            grid: { color: 'rgba(212,160,23,0.06)' },
+            ticks: { color: '#b0b0b0', font: { size: 10 } },
+          },
+          y: {
+            beginAtZero: true,
+            grid: { color: 'rgba(212,160,23,0.06)' },
+            ticks: { color: '#b0b0b0', font: { size: 10 }, precision: 0 },
+          },
+        },
+      },
+    });
+  }
+
+  function renderStatBoxes(charts, history, files) {
+    // 30 günlük toplam dinleyici örneklem sayısı (her gün için y toplamı)
+    const daily = charts?.daily?.metrics?.[0]?.data || [];
+    const peak = daily.reduce((m, p) => Math.max(m, p.y || 0), 0);
+    $('statPeakListeners').textContent = peak || 0;
+    // Geçmiş kayıtların 30 gün içinde olanları
+    const cutoff = Math.floor(Date.now() / 1000) - 30 * 24 * 3600;
+    const recentPlays = (history || []).filter(h => (h.played_at || 0) >= cutoff).length;
+    $('statTotalListens').textContent = recentPlays;
+    $('statTotalSongs').textContent = (files || []).length;
+  }
+
+  function renderTopSongs(bw) {
+    const root = $('topSongsList');
+    const list = bw?.mostPlayed || [];
+    if (!list.length) {
+      root.innerHTML = '<div class="empty">Henüz çalma verisi yok</div>';
+      return;
+    }
+    root.innerHTML = list.slice(0, 10).map((s, i) => {
+      const song = s.song || s;
+      const title = song.title || song.text || '—';
+      const artist = song.artist || '';
+      const count = s.num_plays ?? s.stat_delta ?? '';
+      return `
+        <div class="top-row">
+          <span class="top-rank">${i + 1}</span>
+          <div class="top-meta">
+            <div class="top-title">${escHtml(title)}</div>
+            ${artist ? `<div class="top-sub">${escHtml(artist)}</div>` : ''}
+          </div>
+          ${count !== '' ? `<span class="top-count">${count} çalma</span>` : ''}
+        </div>
+      `;
+    }).join('');
+  }
+
+  function renderRecent(history) {
+    const root = $('recentList');
+    const list = (history || []).slice(0, 15);
+    if (!list.length) {
+      root.innerHTML = '<div class="empty">Henüz kayıt yok</div>';
+      return;
+    }
+    root.innerHTML = list.map(h => {
+      const song = h.song || {};
+      const title = song.title || song.text || '—';
+      const artist = song.artist || '';
+      const t = h.played_at ? new Date(h.played_at * 1000).toLocaleTimeString('tr-TR', {hour: '2-digit', minute: '2-digit'}) : '';
+      const text = artist ? `${title} — ${artist}` : title;
+      return `
+        <div class="recent-row">
+          <span class="recent-time">${t}</span>
+          <span class="recent-text">${escHtml(text)}</span>
+          ${h.playlist ? `<span class="recent-pl">${escHtml(h.playlist)}</span>` : ''}
+        </div>
+      `;
+    }).join('');
+  }
+
+  // ============== LIBRARY ==============
+  $('searchBtn').addEventListener('click', loadLibrary);
+  $('searchInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') loadLibrary();
+  });
+
+  async function loadLibrary() {
+    const root = $('libraryList');
+    const q = $('searchInput').value.trim();
+    root.innerHTML = '<div class="empty">Yükleniyor...</div>';
+    try {
+      const qp = q ? '?searchPhrase=' + encodeURIComponent(q) : '';
+      const items = await api(`/station/${STATION}/files/list${qp}`);
+      if (!items || items.length === 0) {
+        root.innerHTML = '<div class="empty">Kayıt bulunamadı</div>';
+        return;
+      }
+      root.innerHTML = items.slice(0, 200).map(it => {
+        const media = it.media || {};
+        const title = it.text || media.title || it.path || '—';
+        const artist = media.artist || '';
+        const id = media.id || it.id;
+        const path = it.path || '';
+        const playlists = (media.playlists || []);
+        const inPlaylist = playlists.length > 0;
+        const playlistLabel = inPlaylist
+          ? `<span class="recent-pl" title="${escHtml(playlists.map(p => p.name || '').join(', '))}">yayında</span>`
+          : '<span class="top-count" style="background:rgba(229,57,53,0.15);color:#ff8a87;">yayın dışı</span>';
+        return `
+          <div class="queue-row">
+            <div class="qm">
+              <div class="qt">${escHtml(title)}</div>
+              ${artist ? `<div class="qa">${escHtml(artist)}</div>` : ''}
+            </div>
+            ${playlistLabel}
+            ${!inPlaylist && path
+              ? `<button class="row-action gold" data-add="${escHtml(path)}" data-title="${escHtml(title)}" title="Yayına ekle">＋</button>`
+              : ''}
+            ${id ? `<button class="row-action" data-del="${id}" data-title="${escHtml(title)}" title="Sil">🗑</button>` : ''}
+          </div>
+        `;
+      }).join('');
+      if (items.length > 200) {
+        root.insertAdjacentHTML('beforeend', `<div class="empty">+${items.length - 200} daha — aramayla daralt</div>`);
+      }
+      root.querySelectorAll('[data-del]').forEach(b => {
+        b.addEventListener('click', () => deleteMedia(parseInt(b.dataset.del, 10), b.dataset.title));
+      });
+      root.querySelectorAll('[data-add]').forEach(b => {
+        b.addEventListener('click', () => addToPlaylist(b.dataset.add, b.dataset.title));
+      });
+    } catch (e) {
+      root.innerHTML = `<div class="empty" style="color:var(--red)">Hata: ${escHtml(e.message)}</div>`;
+    }
+  }
+
+  async function deleteMedia(id, title) {
+    if (!confirm(`"${title}" kütüphaneden silinecek. Emin misin?`)) return;
+    try {
+      await api(`/station/${STATION}/file/${id}`, { method: 'DELETE' });
+      toast(`${title} silindi`);
+      loadLibrary();
+    } catch (e) {
+      toast('Silinemedi: ' + e.message, true);
+    }
+  }
+
+  let _defaultPlaylistId = null;
+  async function getDefaultPlaylistId() {
+    if (_defaultPlaylistId) return _defaultPlaylistId;
+    const pls = await api(`/station/${STATION}/playlists`);
+    const enabled = pls.find(p => p.is_enabled) || pls[0];
+    _defaultPlaylistId = enabled?.id;
+    return _defaultPlaylistId;
+  }
+
+  async function addToPlaylist(path, title) {
+    try {
+      const plId = await getDefaultPlaylistId();
+      if (!plId) {
+        toast('Aktif playlist bulunamadı', true);
+        return;
+      }
+      await api(`/station/${STATION}/files/batch`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          do: 'playlist',
+          files: [path],
+          dirs: [],
+          playlists: [plId],
+        }),
+      });
+      toast(`${title} yayına eklendi`);
+      loadLibrary();
+    } catch (e) {
+      toast('Eklenemedi: ' + e.message, true);
+    }
+  }
+
+  // ============== UPLOAD ==============
+  const dropZone = $('dropZone');
+  const fileInput = $('fileInput');
+  const uploadList = $('uploadList');
+
+  dropZone.addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', (e) => handleFiles(Array.from(e.target.files || [])));
+  ['dragenter', 'dragover'].forEach(ev =>
+    dropZone.addEventListener(ev, (e) => {
+      e.preventDefault();
+      dropZone.classList.add('dragover');
+    })
+  );
+  ['dragleave', 'drop'].forEach(ev =>
+    dropZone.addEventListener(ev, (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('dragover');
+    })
+  );
+  dropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    const files = Array.from(e.dataTransfer.files || []);
+    handleFiles(files);
+  });
+
+  async function handleFiles(files) {
+    if (!files.length) return;
+    for (const f of files) {
+      await uploadOne(f);
+    }
+    loadLibrary();
+  }
+
+  async function uploadOne(file) {
+    const row = document.createElement('div');
+    row.className = 'upload-item pending';
+    row.innerHTML = `
+      <span class="ut">${escHtml(file.name)}</span>
+      <div class="upload-bar"><div style="width:0%"></div></div>
+      <span class="us">…</span>
+    `;
+    uploadList.prepend(row);
+    const bar = row.querySelector('.upload-bar > div');
+    const status = row.querySelector('.us');
+    try {
+      // AzuraCast `/files/upload` Flow.js multipart bekliyor — `/files` JSON+base64
+      // endpoint'i internal hata veriyor (storage_location_id not initialized).
+      await new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', `${API_BASE}/station/${STATION}/files/upload`);
+        xhr.setRequestHeader('X-API-Key', apiKey);
+        xhr.upload.onprogress = (e) => {
+          if (e.lengthComputable) {
+            const pct = Math.min(99, Math.round((e.loaded / e.total) * 100));
+            bar.style.width = pct + '%';
+            status.textContent = pct + '%';
+          }
+        };
+        xhr.onload = () => {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            bar.style.width = '100%';
+            resolve();
+          } else {
+            reject(new Error(`HTTP ${xhr.status}: ${xhr.responseText.slice(0, 160)}`));
+          }
+        };
+        xhr.onerror = () => reject(new Error('Ağ hatası'));
+        const fd = new FormData();
+        fd.append('file', file, file.name);
+        fd.append('flowFilename', file.name);
+        fd.append('flowChunkNumber', '1');
+        fd.append('flowTotalChunks', '1');
+        fd.append('flowIdentifier', Date.now() + '-' + file.name);
+        fd.append('flowChunkSize', String(file.size));
+        fd.append('flowTotalSize', String(file.size));
+        fd.append('flowCurrentChunkSize', String(file.size));
+        xhr.send(fd);
+      });
+      row.className = 'upload-item ok';
+      status.textContent = '✓ yüklendi';
+    } catch (e) {
+      row.className = 'upload-item err';
+      status.textContent = 'hata: ' + e.message.slice(0, 80);
+    }
+  }
+
+  // ============== BOOT ==============
+  (async function boot() {
+    if (apiKey) {
+      try {
+        me = await api('/frontend/account/me');
+        enterApp();
+        loadLibrary();
+      } catch (e) {
+        logout();
+      }
+    }
+  })();
+</script>
+</body>
+</html>
